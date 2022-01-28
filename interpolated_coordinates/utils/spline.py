@@ -624,7 +624,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         Antiderivative can be used to evaluate definite integrals:
 
         >>> ispl = spl.antiderivative()
-        >>> ispl(np.pi/2) - ispl(0)
+        >>> ispl(np.pi/2) - ispl(0)  # doctest: +FLOAT_CMP
         2.2572053588768486
 
         This is indeed an approximation to the complete elliptic integral

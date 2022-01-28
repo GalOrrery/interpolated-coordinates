@@ -89,7 +89,6 @@ class Test_GenericRepresentation:
 
 
 class Test_GenericRepresentationSubclass(Test_GenericRepresentation):
-
     @pytest.fixture(scope="class", autouse=True)
     def setup_cleanup(self, rep_cls):
         yield  # run tests
@@ -274,7 +273,6 @@ class Test_GenericDifferential:
 
 
 class Test_GenericDifferentialSubClass:
-
     @pytest.fixture(scope="class", autouse=True)
     def setup_cleanup(self, rep_cls, dif_cls):
         yield  # run tests
