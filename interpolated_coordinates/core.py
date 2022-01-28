@@ -535,28 +535,28 @@ class InterpolatedBaseRepresentationOrDifferential:
 
         return ideriv
 
-#     def antiderivative(self, n: int = 1) -> T.Any:
-#         r"""Construct a new spline representing the integral of this spline.
-# 
-#         .. todo::
-# 
-#             Allow for attaching the differentials?
-# 
-#             a differential should become a position!
-# 
-#         Parameters
-#         ----------
-#         n : int, optional
-#             Order of derivative to evaluate. Default: 1
-#         """
-#         # evaluate the spline on each argument of the position
-#         params = {
-#             k.lstrip("d_"): interp.antiderivative(n=n)(self.affine)
-#             for k, interp in self._interps.items()
-#         }
-#         # deriv = GenericDifferential(*params)
-#         # return self._class_(deriv, self.affine, **self._interp_kwargs)
-#         return params
+    #     def antiderivative(self, n: int = 1) -> T.Any:
+    #         r"""Construct a new spline representing the integral of this spline.
+    #
+    #         .. todo::
+    #
+    #             Allow for attaching the differentials?
+    #
+    #             a differential should become a position!
+    #
+    #         Parameters
+    #         ----------
+    #         n : int, optional
+    #             Order of derivative to evaluate. Default: 1
+    #         """
+    #         # evaluate the spline on each argument of the position
+    #         params = {
+    #             k.lstrip("d_"): interp.antiderivative(n=n)(self.affine)
+    #             for k, interp in self._interps.items()
+    #         }
+    #         # deriv = GenericDifferential(*params)
+    #         # return self._class_(deriv, self.affine, **self._interp_kwargs)
+    #         return params
 
     # def integral(self, a, b):
     #     """Return definite integral between two given points."""
@@ -1704,7 +1704,7 @@ class InterpolatedCoordinateFrame:
 
         Returns
         -------
-        sep : `~astropy.coordinates.Angle` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`
+        sep : `~astropy.coordinates.Angle` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`  # noqa: E501
             The on-sky separation between this and the ``other`` coordinate.
 
         Notes
@@ -1895,7 +1895,7 @@ class InterpolatedSkyCoord(SkyCoord):
 
         Returns
         -------
-        sep : ~astropy.coordinates.Angle` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`
+        sep : ~astropy.coordinates.Angle` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`  # noqa: E501
             The on-sky separation between this and the ``other`` coordinate.
 
         Notes

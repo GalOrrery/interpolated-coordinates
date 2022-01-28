@@ -113,6 +113,7 @@ use_parentheses = "True"
 ensure_newline_before_comments = "True"
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "LOCALFOLDER"]
 known_localfolder = "interpolated_coordinates"
+known_third_party = ["astropy", "numpy", "pytest", "scipy", "setuptools"]
 import_heading_stdlib = "STDLIB"
 import_heading_thirdparty = "THIRD PARTY"
 import_heading_localfolder = "LOCAL"

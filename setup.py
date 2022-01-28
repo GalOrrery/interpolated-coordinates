@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
 # NOTE: The configuration for the package, including the name, version, and
@@ -79,5 +80,5 @@ setup(
     use_scm_version={
         "write_to": os.path.join("interpolated_coordinates", "version.py"),
         "write_to_template": VERSION_TEMPLATE,
-    }
+    },
 )

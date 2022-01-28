@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Configure Test Suite.
 
 This file is used to configure the behavior of pytest when using the Astropy
@@ -16,7 +17,7 @@ from astropy.version import version as astropy_version
 # For Astropy 3.0 and later, we can use the standalone pytest plugin
 if astropy_version < "3.0":
     # THIRD PARTY
-    from astropy.tests.pytest_plugins import *  # noqa
+    from astropy.tests.pytest_plugins import *  # noqa: F401, F403
 
     del pytest_report_header
     ASTROPY_HEADER = True
