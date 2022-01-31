@@ -372,45 +372,6 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
             # It's an unknown subclass -- don't change class. cf. #731
             pass
 
-    # def _reset_nest(self, data, nest=None):
-    #     n = data[10]
-    #     if nest is None:
-    #         k, m = data[5], len(data[0])
-    #         nest = m + k + 1  # this is the maximum bound for nest
-    #     else:
-    #         if not n <= nest:
-    #             raise ValueError("`nest` can only be increased")
-    #     t, c, fpint, nrdata = [
-    #         np.resize(data[j], nest) for j in [8, 9, 11, 12]
-    #     ]
-
-    #     args = data[:8] + (t, c, n, fpint, nrdata, data[13])
-    #     data = dfitpack.fpcurf1(*args)
-    #     return data
-
-    # # /def
-
-    # def set_smoothing_factor(self, s):  # doesn't need changing
-    #     """ Continue spline computation with the given smoothing
-    #     factor s and with the knots found at the last call.
-
-    #     This routine modifies the spline in place.
-
-    #     """
-    #     data = self._data
-    #     if data[6] == -1:
-    #         warnings.warn(
-    #             "smoothing factor unchanged for" "LSQ spline with fixed knots"
-    #         )
-    #         return
-    #     args = data[:6] + (s,) + data[7:]
-    #     data = dfitpack.fpcurf1(*args)
-    #     if data[-1] == 1:
-    #         # nest too small, setting to maximum bound
-    #         data = self._reset_nest(data)
-    #     self._data = data
-    #     self._reset_class()
-
     def __call__(self, x: np.ndarray, nu: int = 0, ext: T.Optional[int] = None) -> u.Quantity:
         """Evaluate spline (or its nu-th derivative) at positions x.
 
@@ -934,7 +895,3 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
             ext=ext,
             check_finite=check_finite,
         )
-
-
-##############################################################################
-# END
