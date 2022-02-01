@@ -1,0 +1,43 @@
+Docs:
+  - docs/*
+  - docs/_static/*
+  - docs/_templates/*
+  - docs/development/**/*
+  - docs/whatsnew/*
+  - examples/**/*
+  - licenses/*
+  - CITATION
+  - .mailmap
+  - readthedocs.yml
+  - '*.md'
+  - any: ['*.rst', '!CHANGES.rst']
+
+testing:
+  - codecov.yml
+  - conftest.py
+  - '**/conftest.py'
+  - azure-pipelines.yml
+  - tox.ini
+  - .circleci/*
+  - .github/**/*.yml
+  - .pep8speaks.yml
+  - .pyinstaller/**/*
+
+installation:
+  - docs/install.rst
+  - MANIFEST.in
+  - pip-requirements
+  - pyproject.toml
+  - setup.*
+
+Release:
+  - docs/development/releasing.rst
+
+
+coordinates:
+  - interpolated_coordinates/*
+  - interpolated_coordinates/tests/**/*
+  - docs/index.rst
+
+utils:
+  - any: ['**/utils/**/*',]
