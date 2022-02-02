@@ -138,3 +138,7 @@ astropy_header = "True"
 doctest_plus = "enabled"
 text_file_format = "rst"
 addopts = "--doctest-rst"
+
+
+[tool.setuptools_scm]
+write_to = "interpolated_coordinates/_version.py"
