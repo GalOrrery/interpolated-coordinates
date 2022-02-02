@@ -72,7 +72,7 @@ jobs:
             os: ubuntu-18.04
             python: 3.8
             toxenv: py38-test-oldestdeps-alldeps-cov-clocale
-            toxposargs: --remote-data=interpolated_coordinates
+            toxposargs: --remote-data=github
 
           - name: Python 3.9 with all optional dependencies (Windows)
             os: windows-latest
