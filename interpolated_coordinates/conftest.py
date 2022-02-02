@@ -8,36 +8,34 @@ get picked up when running the tests inside an interpreter using
 
 """
 
+##############################################################################
+# IMPORTS
+
 # STDLIB
 import os
 
 # THIRD PARTY
 from astropy.version import version as astropy_version
 
-# For Astropy 3.0 and later, we can use the standalone pytest plugin
-if astropy_version < "3.0":
+try:
     # THIRD PARTY
-    from astropy.tests.pytest_plugins import *  # noqa: F401, F403
+    from pytest_astropy_header.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
 
-    del pytest_report_header
     ASTROPY_HEADER = True
-else:
-    try:
-        # THIRD PARTY
-        from pytest_astropy_header.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
+except ImportError:
+    ASTROPY_HEADER = False
 
-        ASTROPY_HEADER = True
-    except ImportError:
-        ASTROPY_HEADER = False
+##############################################################################
+# CODE
+##############################################################################
 
 
-def pytest_configure(config):
-    """Configure Pytest with Astropy.
+def pytest_configure(config) -> None:
+    """Configure :mod:`pytest` with :mod:`astropy`.
 
     Parameters
     ----------
     config : pytest configuration
-
     """
     if ASTROPY_HEADER:
 
@@ -53,3 +51,40 @@ def pytest_configure(config):
 
         packagename = os.path.basename(os.path.dirname(__file__))
         TESTED_VERSIONS[packagename] = __version__
+
+
+# ------------------------------------------------------
+
+
+@pytest.fixture(scope="session", autouse=True)
+def add_numpy(doctest_namespace) -> None:
+    """Add :mod:`numpy` to :mod:`pytest`.
+
+    Parameters
+    ----------
+    doctest_namespace : namespace
+
+    """
+    # THIRD PARTY
+    import numpy
+
+    # add to namespace
+    doctest_namespace["np"] = numpy
+
+
+@pytest.fixture(scope="session", autouse=True)
+def add_astropy(doctest_namespace) -> None:
+    """Add :mod:`astropy` stuff to :mod:`pytest`.
+
+    Parameters
+    ----------
+    doctest_namespace : namespace
+
+    """
+    # THIRD PARTY
+    import astropy.coordinates as coord
+    import astropy.units
+
+    # add to namespace
+    doctest_namespace["coord"] = coord
+    doctest_namespace["u"] = astropy.units
