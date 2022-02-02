@@ -15,6 +15,7 @@ get picked up when running the tests inside an interpreter using
 import os
 
 # THIRD PARTY
+import pytest
 from astropy.version import version as astropy_version
 
 try:
