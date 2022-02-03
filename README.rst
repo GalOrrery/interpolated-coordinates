@@ -87,6 +87,8 @@ This module provides wrappers to interpolate along each dimension of a coordinat
 
 For all the following examples we assume these imports:
 
+.. code-block:: python
+
     >>> import astropy.units as u
     >>> import astropy.coordinates as coord
     >>> import numpy as np
