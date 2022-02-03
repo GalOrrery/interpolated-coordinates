@@ -104,7 +104,7 @@ is even kept when transforming frames.
          (0.76923077, -1.94973395, 1.11038556, 0.66698678)]
      (has differentials w.r.t.: 's')>
 
-For deeper integration and access to interpolated methods the
+For deeper integration and access to interpolation methods the
 ``InterpolatedCoordinateFrame`` can wrap any ``CoordinateFame``, whether
 or not it contains an interpolated representation.
 
