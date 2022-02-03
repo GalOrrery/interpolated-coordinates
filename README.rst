@@ -98,6 +98,8 @@ Interpolated Representations
 
 We will start with interpolating |Rep|_ objects.
 
+.. code-block:: python
+
     >>> npts = 40  # the number of points
     >>> rep = coord.CartesianRepresentation(
     ...     x=np.linspace(0, 1, num=npts) * u.kpc,
@@ -109,6 +111,8 @@ We will start with interpolating |Rep|_ objects.
     ...         d_z=np.linspace(5, 6, num=npts) * (u.km / u.s)))
 
 Now that the a standard |CartRep|_ is defined, we can interpolate each dimension against an affine parameter. The affine parameter can have any units: time, arc length, furlongs per steradian, etc. So long as the value (of the affine parameter) works with |IUS|_, it's AOK.
+
+.. code-block:: python
 
     >>> affine = np.linspace(0, 10, npts=npts) * u.Myr
     >>> irep = icoord.InterpolatedRepresentation(rep, affine=affine)
@@ -123,6 +127,8 @@ Now that the a standard |CartRep|_ is defined, we can interpolate each dimension
 Interpolation means we can get the coordinate (representation) at any point
 supported by the affine parameter. For example, the Cartesian coordinate
 at some arbitrary value, say ``affine=4.873 * u.Myr``, is
+
+.. code-block:: python
 
     >>> irep(4.873 * u.Myr)
     <CartesianRepresentation (x, y, z) in kpc
@@ -144,6 +150,8 @@ This interpolation machinery is built on top of Astropy's Representation
 class and supports all the expected operations, like `changing representations <https://docs.astropy.org/en/stable/api/astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation.represent_as>`_,
 while maintaining the interpolation.
 
+.. code-block:: python
+
     >>> irep.represent_as(coord.SphericalRepresentation)[:4]
     <InterpolatedSphericalRepresentation (affine| lon, lat, distance) in ...
         [(0.        , 1.57079633, 1.10714872, 2.23606798),
@@ -155,6 +163,8 @@ Also supported are some of |scipy| interpolation methods. In particular,
 we can differentiate the interpolated coordinates with respect to the affine
 parameter.
 
+.. code-block:: python
+
     >>> irep.derivative(n=1)[:4]
     <InterpolatedCartesianDifferential (affine| d_x, d_y, d_z) in ...
         [(0.        , 0.1, 0.1, 0.1), (0.25641026, 0.1, 0.1, 0.1),
@@ -163,6 +173,8 @@ parameter.
 Note that the result is an interpolated `Differential <https://docs.astropy.org/en/stable/api/astropy.coordinates.BaseDifferential.html>`_ class. Higher-order
 derivatives can also be constructed, but they do not have a corresponding
 class in Astropy, so a "Generic" class is constructed.
+
+.. code-block:: python
 
     >>> irep.derivative(n=2)[:4]
     <InterpolatedGenericCartesian2ndDifferential (affine| d_x, d_y, d_z) in ...
@@ -183,6 +195,8 @@ Representations are all well and good, but what about coordinate frames?
 The interpolated representations can be used the same as Astropy's, including
 in a |Frame|_.
 
+.. code-block:: python
+
     >>> frame = coord.ICRS(irep)
     >>> frame[:1]
     <ICRS Coordinate: (ra, dec, distance) in (deg, deg, kpc)
@@ -192,6 +206,8 @@ in a |Frame|_.
 
 The underlying representation is still interpolated, and the interpolation
 is even kept when transforming frames.
+
+.. code-block:: python
 
     >>> frame = frame.transform_to(coord.Galactic())
     >>> frame.data[:4]
@@ -205,6 +221,8 @@ is even kept when transforming frames.
 For deeper integration and access to interpolation methods, the
 ``InterpolatedCoordinateFrame`` can wrap any |Frame|_, whether
 or not it contains an interpolated representation.
+
+.. code-block:: python
 
     >>> iframe = icoord.InterpolatedCoordinateFrame(frame)  # frame contains irep
     >>> iframe[:4]
@@ -220,6 +238,8 @@ or not it contains an interpolated representation.
          (0.76923077, 0.00195215, -0.28290567, 6.48140523)]>
 
 When wrapping an un-interpolated coordinate, the affine parameter is required.
+
+.. code-block:: python
 
     >>> frame = coord.ICRS(rep)  # no interpolation (e.g. irep)
     >>> iframe = icoord.InterpolatedCoordinateFrame(frame, affine=affine)
@@ -238,12 +258,16 @@ When wrapping an un-interpolated coordinate, the affine parameter is required.
 Just as for interpolated representations, interpolated frames can be evaluated,
 differentiated, etc.
 
+.. code-block:: python
+
     >>> iframe(4.873 * u.Myr)
     <ICRS Coordinate: (ra, dec, distance) in (deg, deg, kpc)
         (71.8590987, 57.82047953, 2.93873848)
      (pm_ra_cosdec, pm_dec, radial_velocity) in (mas / yr, mas / yr, km / s)
         (-0.13759357, -0.1152677, 7.49365212)>
 
+
+.. code-block:: python
 
     >>> iframe.derivative()[:4]
     <InterpolatedCartesianDifferential (affine| d_x, d_y, d_z) in Myr| kpc / Myr
@@ -259,6 +283,8 @@ of SkyCoord, not a proxy class like the interpolated representations and
 coordinate frame. As such, ``InterpolatedSkyCoord`` can be instantiated in
 all the normal ways, except that it requires the kwarg ``affine``.
 
+.. code-block:: python
+
     >>> isc = icoord.InterpolatedSkyCoord(
     ...         [1, 2, 3, 4], [-30, 45, 8, 16],
     ...         frame="icrs", unit="deg",
@@ -270,6 +296,8 @@ all the normal ways, except that it requires the kwarg ``affine``.
 
 
 The only case when |SkyCoord| doesn't need ``affine`` is if it is wrapping an interpolated |Frame|_.
+
+.. code-block:: python
 
     >>> isc = icoord.InterpolatedSkyCoord(iframe)
     >>> isc[:4]
@@ -287,6 +315,8 @@ The only case when |SkyCoord| doesn't need ``affine`` is if it is wrapping an in
 
 Like for |Frame|_, ``InterpolatedSkyCoord`` preserves the interpolation when transformed between |Frame|_\s and |Rep|_\s.
 
+.. code-block:: python
+
     >>> isc.transform_to("galactocentric")[:4]
     <InterpolatedSkyCoord (Galactocentric: galcen_coord=<ICRS Coordinate: (ra, dec) in deg
     (266.4051, -28.936175)>, galcen_distance=8.122 kpc, galcen_v_sun=(12.9, 245.6, 7.78) km / s, z_sun=20.8 pc, roll=0.0 deg): (x, y, z) in kpc
@@ -303,6 +333,8 @@ Like for |Frame|_, ``InterpolatedSkyCoord`` preserves the interpolation when tra
 
 Interpolation means ``InterpolatedSkyCoord`` can be evaluated anywhere between the affine parameter bounds.
 
+.. code-block:: python
+
     >>> isc(4.8 * u.Gyr)
     <SkyCoord (ICRS): (ra, dec, distance) in (deg, deg, kpc)
         (45.05956281, 35.34846733, 833.11537997)
@@ -311,6 +343,8 @@ Interpolation means ``InterpolatedSkyCoord`` can be evaluated anywhere between t
 
 
 ``InterpolatedSkyCoord`` can also be differentiated.
+
+.. code-block:: python
 
     >>> isc.derivative()[:4]
     <InterpolatedCartesianDifferential (affine| d_x, d_y, d_z) in Myr| kpc / Myr
@@ -327,6 +361,8 @@ The standard workaround solution is to strip the quantities of their units,
 apply the interpolation, then add the units back.
 
 As an example:
+
+.. code-block:: python
 
     >>> import numpy as np, astropy.units as u
     >>> from scipy.interpolate import InterpolatedUnivariateSpline
@@ -345,6 +381,8 @@ This is fine, but a bit of a hassle. Instead, we can wrap the unit stripping /
 adding process into a unit-aware version of the spline interpolation classes.
 
 The same example as above, but with the new class:
+
+.. code-block:: python
 
     >>> from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
     >>> spl = InterpolatedUnivariateSplinewithUnits(x, y)
