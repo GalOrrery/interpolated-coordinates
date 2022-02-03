@@ -182,7 +182,7 @@ For deeper integration and access to interpolated methods, the
 ``InterpolatedCoordinateFrame`` can wrap any |Frame|, whether
 or not it contains an interpolated representation.
 
-    >>> iframe = icoord.InterpolatedCoordinateFrame(frame)  # frame contains `irep`
+    >>> iframe = icoord.InterpolatedCoordinateFrame(frame)  # frame contains irep
     >>> iframe[:4]
     <InterpolatedGalactic Coordinate: (affine| l, b, distance) in ...
         [(0.        , 150.32382371, 18.61829304, 2.23606798),
@@ -197,7 +197,7 @@ or not it contains an interpolated representation.
 
 When wrapping an un-interpolated coordinate, the affine parameter is required.
 
-    >>> frame = coord.ICRS(rep)  # no interpolation (e.g. `irep`)
+    >>> frame = coord.ICRS(rep)  # no interpolation (e.g. irep)
     >>> iframe = icoord.InterpolatedCoordinateFrame(frame, affine=affine)
     >>> iframe[:2]
     <InterpolatedICRS Coordinate: (affine| ra, dec, distance) in ...
