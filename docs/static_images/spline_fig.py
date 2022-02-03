@@ -10,11 +10,10 @@ from astropy.visualization import quantity_support
 # LOCAL
 from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
 
-
 quantity_support()
 
 x = np.linspace(-3, 3, num=50) * u.s
-y = 8 * u.m / (x.value**2 + 4)
+y = 8 * u.m / (x.value ** 2 + 4)
 spl = InterpolatedUnivariateSplinewithUnits(x, y)
 spl(np.linspace(-2, 2, num=10) * u.s)  # Evaluate spline
 
