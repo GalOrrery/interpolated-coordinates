@@ -88,6 +88,7 @@ This module provides wrappers to interpolate along each dimension of a coordinat
 For all the following examples we assume these imports:
 
 .. code-block:: python
+    :emphasize-lines: 4
 
     >>> import astropy.units as u
     >>> import astropy.coordinates as coord
@@ -119,6 +120,8 @@ Now that the a standard |CartRep|_ is defined, we can interpolate each dimension
     >>> affine = np.linspace(0, 10, npts=npts) * u.Myr
     >>> irep = icoord.InterpolatedRepresentation(rep, affine=affine)
     >>> irep[:4]
+::
+
     <InterpolatedCartesianRepresentation (affine| x, y, z) in Myr| kpc
         [(0.        , 0.        , 1.        , 2.        ),
          (0.25641026, 0.02564103, 1.02564103, 2.02564103),
@@ -133,6 +136,8 @@ at some arbitrary value, say ``affine=4.873 * u.Myr``, is
 .. code-block:: python
 
     >>> irep(4.873 * u.Myr)
+::
+
     <CartesianRepresentation (x, y, z) in kpc
         (0.4873, 1.4873, 2.4873)
      (has differentials w.r.t.: 's')>
@@ -155,6 +160,8 @@ while maintaining the interpolation.
 .. code-block:: python
 
     >>> irep.represent_as(coord.SphericalRepresentation)[:4]
+::
+
     <InterpolatedSphericalRepresentation (affine| lon, lat, distance) in ...
         [(0.        , 1.57079633, 1.10714872, 2.23606798),
          (0.25641026, 1.54580153, 1.10197234, 2.27064276),
@@ -168,6 +175,8 @@ parameter.
 .. code-block:: python
 
     >>> irep.derivative(n=1)[:4]
+::
+
     <InterpolatedCartesianDifferential (affine| d_x, d_y, d_z) in ...
         [(0.        , 0.1, 0.1, 0.1), (0.25641026, 0.1, 0.1, 0.1),
          (0.51282051, 0.1, 0.1, 0.1), (0.76923077, 0.1, 0.1, 0.1)]>
@@ -179,6 +188,8 @@ class in Astropy, so a "Generic" class is constructed.
 .. code-block:: python
 
     >>> irep.derivative(n=2)[:4]
+::
+
     <InterpolatedGenericCartesian2ndDifferential (affine| d_x, d_y, d_z) in ...
         [(0.        , -5.41233725e-16,  3.35564909e-15, -9.45535317e-14),
          (0.25641026,  1.80411242e-17, -2.88657986e-16, -1.91326122e-14),
@@ -201,6 +212,8 @@ in a |Frame|_.
 
     >>> frame = coord.ICRS(irep)
     >>> frame[:1]
+::
+
     <ICRS Coordinate: (ra, dec, distance) in (deg, deg, kpc)
         [(90., 63.43494882, 2.23606798)]
      (pm_ra_cosdec, pm_dec, radial_velocity) in (mas / yr, mas / yr, km / s)
@@ -213,6 +226,8 @@ is even kept when transforming frames.
 
     >>> frame = frame.transform_to(coord.Galactic())
     >>> frame.data[:4]
+::
+
     <InterpolatedCartesianRepresentation (affine| x, y, z) in Myr| kpc
         [(0.        , -1.8411072 , 1.04913465, 0.71389129),
          (0.25641026, -1.87731612, 1.06955162, 0.69825645),
@@ -228,6 +243,8 @@ or not it contains an interpolated representation.
 
     >>> iframe = icoord.InterpolatedCoordinateFrame(frame)  # frame contains irep
     >>> iframe[:4]
+::
+
     <InterpolatedGalactic Coordinate: (affine| l, b, distance) in ...
         [(0.        , 150.32382371, 18.61829304, 2.23606798),
          (0.25641026, 150.32880684, 17.90952972, 2.27064276),
@@ -246,6 +263,8 @@ When wrapping an un-interpolated coordinate, the affine parameter is required.
     >>> frame = coord.ICRS(rep)  # no interpolation (e.g. irep)
     >>> iframe = icoord.InterpolatedCoordinateFrame(frame, affine=affine)
     >>> iframe[:2]
+::
+
     <InterpolatedICRS Coordinate: (affine| ra, dec, distance) in ...
         [(0.        , 90.        , 63.43494882, 2.23606798),
          (0.25641026, 88.56790382, 63.13836438, 2.27064276),
@@ -263,6 +282,8 @@ differentiated, etc.
 .. code-block:: python
 
     >>> iframe(4.873 * u.Myr)
+::
+
     <ICRS Coordinate: (ra, dec, distance) in (deg, deg, kpc)
         (71.8590987, 57.82047953, 2.93873848)
      (pm_ra_cosdec, pm_dec, radial_velocity) in (mas / yr, mas / yr, km / s)
@@ -272,6 +293,8 @@ differentiated, etc.
 .. code-block:: python
 
     >>> iframe.derivative()[:4]
+::
+
     <InterpolatedCartesianDifferential (affine| d_x, d_y, d_z) in Myr| kpc / Myr
         [(0.        , 0.1, 0.1, 0.1), (0.25641026, 0.1, 0.1, 0.1),
          (0.51282051, 0.1, 0.1, 0.1), (0.76923077, 0.1, 0.1, 0.1)]>
@@ -292,6 +315,8 @@ all the normal ways, except that it requires the kwarg ``affine``.
     ...         frame="icrs", unit="deg",
     ...         affine=affine[:4])
     >>> isc
+::
+
     <InterpolatedSkyCoord (ICRS): (affine| ra, dec) in Myr| deg
         [(0.        , 1., -30.), (0.25641026, 2.,  45.),
          (0.51282051, 3.,   8.), (0.76923077, 4.,  16.)]>
@@ -303,6 +328,8 @@ The only case when |SkyCoord| doesn't need ``affine`` is if it is wrapping an in
 
     >>> isc = icoord.InterpolatedSkyCoord(iframe)
     >>> isc[:4]
+::
+
     <InterpolatedSkyCoord (ICRS): (ra, dec, distance) in (deg, deg, kpc)
         [(90.        , 63.43494882, 2.23606798),
          (88.56790382, 63.13836438, 2.27064276),
@@ -320,6 +347,8 @@ Like for |Frame|_, ``InterpolatedSkyCoord`` preserves the interpolation when tra
 .. code-block:: python
 
     >>> isc.transform_to("galactocentric")[:4]
+::
+
     <InterpolatedSkyCoord (Galactocentric: galcen_coord=<ICRS Coordinate: (ra, dec) in deg
     (266.4051, -28.936175)>, galcen_distance=8.122 kpc, galcen_v_sun=(12.9, 245.6, 7.78) km / s, z_sun=20.8 pc, roll=0.0 deg): (x, y, z) in kpc
         [( -9.96124634, 1.04913531, 0.73940283),
@@ -338,6 +367,8 @@ Interpolation means ``InterpolatedSkyCoord`` can be evaluated anywhere between t
 .. code-block:: python
 
     >>> isc(4.8 * u.Gyr)
+::
+
     <SkyCoord (ICRS): (ra, dec, distance) in (deg, deg, kpc)
         (45.05956281, 35.34846733, 833.11537997)
      (pm_ra_cosdec, pm_dec, radial_velocity) in (mas / yr, mas / yr, km / s)
@@ -349,6 +380,8 @@ Interpolation means ``InterpolatedSkyCoord`` can be evaluated anywhere between t
 .. code-block:: python
 
     >>> isc.derivative()[:4]
+::
+
     <InterpolatedCartesianDifferential (affine| d_x, d_y, d_z) in Myr| kpc / Myr
         [(0.        , 0.1, 0.1, 0.1), (0.25641026, 0.1, 0.1, 0.1),
          (0.51282051, 0.1, 0.1, 0.1), (0.76923077, 0.1, 0.1, 0.1)]>
@@ -375,6 +408,8 @@ As an example:
     >>> xs = np.linspace(-2, 2, 10) * u.s  # For evaluating the spline
     >>> y_ntrp = spl(xs.to_value(u.s)) * u.m  # Evaluate, adding back units
     >>> y_ntrp
+::
+
     <Quantity [1.00000009, 1.24615404, 1.52830261, 1.79999996, 1.97560874,
                1.97560874, 1.79999996, 1.52830261, 1.24615404, 1.00000009] m>
 
@@ -389,6 +424,8 @@ The same example as above, but with the new class:
     >>> from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
     >>> spl = InterpolatedUnivariateSplinewithUnits(x, y)
     >>> spl(xs)
+::
+
     <Quantity [1.00000009, 1.24615404, 1.52830261, 1.79999996, 1.97560874,
                1.97560874, 1.79999996, 1.52830261, 1.24615404, 1.00000009] m>
 
