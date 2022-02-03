@@ -53,21 +53,37 @@ Also in development mode:
 
 
 
-Use
-===
+Usage
+=====
 
-.. |astropy| replace:: `scipy <https://docs.astropy.org/en/stable>`_
-.. |scipy| replace:: `scipy <https://docs.scipy.org/doc/scipy/reference/>`_
-.. |Quantity| replace:: `Quantity <https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html>`_
-.. |CartesianRepresentation| replace:: `CartesianRepresentation <https://docs.astropy.org/en/stable/api/astropy.coordinates.CartesianRepresentation.html>`_
-.. |Frame| replace:: `Coordinate Frame <https://docs.astropy.org/en/stable/api/astropy.coordinates.BaseCoordinateFrame.html>`_
-.. |SkyCoord| replace:: `SkyCoord <https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html>`_
-.. |InterpolatedUnivariateSpline| replace:: `InterpolatedUnivariateSpline <https://docs.scipy.org/doc/scipy/reference/reference/generated/scipy.interpolate.InterpolatedUnivariateSpline.html>`_
+.. |Astropy| replace:: Astropy
+.. _Astropy: https://docs.astropy.org/en/stable
+
+.. |scipy| replace:: scipy
+.. _scipy: https://docs.scipy.org/doc/scipy/reference/
+
+.. |Quantity| replace:: Quantity
+.. _Quantity: https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html
+
+.. |Rep| replace:: Representation
+.. _Rep: https://docs.astropy.org/en/stable/api/astropy.coordinates.BaseRepresentation.html
+
+.. |CartRep| replace:: CartesianRepresentation
+.. _CartRep: https://docs.astropy.org/en/stable/api/astropy.coordinates.CartesianRepresentation.html
+
+.. |Frame| replace:: Coordinate Frame
+.. _Frame: https://docs.astropy.org/en/stable/api/astropy.coordinates.BaseCoordinateFrame.html
+
+.. |SkyCoord| replace:: SkyCoord
+.. _SkyCoord: https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html
+
+.. |IUS| replace:: InterpolatedUnivariateSpline
+.. _IUS: https://docs.scipy.org/doc/scipy/reference/reference/generated/scipy.interpolate.InterpolatedUnivariateSpline.html
 
 
-Astropy |SkyCoord| objects are collections of points.
+Astropy |SkyCoord| and other coordinate objects are collections of points.
 
-This module provides wrappers to interpolate each dimension of a coordinate object with an affine parameter.
+This module provides wrappers to interpolate along each dimension of a coordinate object with an affine parameter.
 
 For all the following examples we assume these imports:
 
@@ -77,10 +93,10 @@ For all the following examples we assume these imports:
     >>> import interpolated_coordinates as icoord
 
 
-Representations
----------------
+Interpolated Representations
+----------------------------
 
-We will start with interpolating `Representation <https://docs.astropy.org/en/stable/api/astropy.coordinates.BaseRepresentation.html>`_ objects.
+We will start with interpolating |Rep|_ objects.
 
     >>> npts = 40  # the number of points
     >>> rep = coord.CartesianRepresentation(
@@ -92,10 +108,10 @@ We will start with interpolating `Representation <https://docs.astropy.org/en/st
     ...         d_y=np.linspace(4, 5, num=npts) * (u.km / u.s),
     ...         d_z=np.linspace(5, 6, num=npts) * (u.km / u.s)))
 
-Now that the a standard |CartesianRepresentation| is defined, we can interpolate each dimension against an affine parameter. The affine parameter can have any units: time, arc length, furlongs per steradian, etc. So long as the value (of the affine parameter) works with |InterpolatedUnivariateSpline|, it's AOK.
+Now that the a standard |CartRep|_ is defined, we can interpolate each dimension against an affine parameter. The affine parameter can have any units: time, arc length, furlongs per steradian, etc. So long as the value (of the affine parameter) works with |IUS|_, it's AOK.
 
     >>> affine = np.linspace(0, 10, npts=npts) * u.Myr
-    >>> irep = icoord.InterpolatedRepresentation(rep, affine)
+    >>> irep = icoord.InterpolatedRepresentation(rep, affine=affine)
     >>> irep[:4]
     <InterpolatedCartesianRepresentation (affine| x, y, z) in Myr| kpc
         [(0.        , 0.        , 1.        , 2.        ),
@@ -147,17 +163,17 @@ class in Astropy, so a "Generic" class is constructed.
          (0.51282051,  5.77315973e-16, -3.93296506e-15,  5.62883073e-14),
          (0.76923077, -8.65973959e-16,  5.89944760e-15, -5.06594766e-14)]>
 
-Care should be taken not to change representations for these higher-order
+Care should be taken **NOT** to change representations for these higher-order
 derivatives. The Astropy machinery allows them to be transformed, but
-the transformation **is most likely incorrect**. *If you are interested in improving representations of higher order differentials please open PRs with improvements, both here and especially in Astropy*.
+the transformation **is almost certainly incorrect**. *If you are interested in improving representations of higher order differentials please open PRs with improvements, both here and especially in Astropy*.
 
 
-Coordinate Frames
------------------
+Interpolated Coordinate Frames
+------------------------------
 
 Representations are all well and good, but what about coordinate frames?
 The interpolated representations can be used the same as Astropy's, including
-in a |Frame|.
+in a |Frame|_.
 
     >>> frame = coord.ICRS(irep)
     >>> frame[:1]
@@ -178,8 +194,8 @@ is even kept when transforming frames.
          (0.76923077, -1.94973395, 1.11038556, 0.66698678)]
      (has differentials w.r.t.: 's')>
 
-For deeper integration and access to interpolated methods, the
-``InterpolatedCoordinateFrame`` can wrap any |Frame|, whether
+For deeper integration and access to interpolation methods, the
+``InterpolatedCoordinateFrame`` can wrap any |Frame|_, whether
 or not it contains an interpolated representation.
 
     >>> iframe = icoord.InterpolatedCoordinateFrame(frame)  # frame contains irep
@@ -227,10 +243,10 @@ differentiated, etc.
          (0.51282051, 0.1, 0.1, 0.1), (0.76923077, 0.1, 0.1, 0.1)]>
 
 
-SkyCoord
---------
+Interpolated SkyCoord
+---------------------
 
-There are also interpolated |SkyCoord|. This is actually a direct subclass
+There are also interpolated |SkyCoord|_. This is actually a direct subclass
 of SkyCoord, not a proxy class like the interpolated representations and
 coordinate frame. As such, ``InterpolatedSkyCoord`` can be instantiated in
 all the normal ways, except that it requires the kwarg ``affine``.
@@ -245,7 +261,7 @@ all the normal ways, except that it requires the kwarg ``affine``.
          (0.51282051, 3.,   8.), (0.76923077, 4.,  16.)]>
 
 
-The only case when |SkyCoord| doesn't need ``affine`` is if it is wrapping an interpolated |Frame|.
+The only case when |SkyCoord| doesn't need ``affine`` is if it is wrapping an interpolated |Frame|_.
 
     >>> isc = icoord.InterpolatedSkyCoord(iframe)
     >>> isc[:4]
@@ -261,7 +277,7 @@ The only case when |SkyCoord| doesn't need ``affine`` is if it is wrapping an in
          (-0.25040783, -0.13166259, 6.48140523)]>
 
 
-Like for |Frame|, ``InterpolatedSkyCoord`` preserves the interpolation when transformed between frames and representations.
+Like for |Frame|_, ``InterpolatedSkyCoord`` preserves the interpolation when transformed between |Frame|_\s and |Rep|_\s.
 
     >>> isc.transform_to("galactocentric")[:4]
     <InterpolatedSkyCoord (Galactocentric: galcen_coord=<ICRS Coordinate: (ra, dec) in deg
@@ -277,7 +293,7 @@ Like for |Frame|, ``InterpolatedSkyCoord`` preserves the interpolation when tran
          (6.71087133, 249.09917872, 6.63355334)]>
 
 
-Interpolation means ``InterpolatedSkyCoord`` can be evaluated anywhere between the affine parameter endpoints
+Interpolation means ``InterpolatedSkyCoord`` can be evaluated anywhere between the affine parameter bounds.
 
     >>> isc(4.8 * u.Gyr)
     <SkyCoord (ICRS): (ra, dec, distance) in (deg, deg, kpc)
@@ -298,7 +314,7 @@ Interpolation means ``InterpolatedSkyCoord`` can be evaluated anywhere between t
 Splines, with units
 -------------------
 
-`scipy splines <https://docs.scipy.org/doc/scipy/reference/interpolate.html>`_ do not support |astropy| quantities with units.
+`scipy splines <https://docs.scipy.org/doc/scipy/reference/interpolate.html>`_ do not support |Astropy|_ quantities with units.
 The standard workaround solution is to strip the quantities of their units,
 apply the interpolation, then add the units back.
 
@@ -330,6 +346,10 @@ The same example as above, but with the new class:
 
 
 These splines underpin the interpolated coordinates, above.
+
+
+Generic Representations
+-----------------------
 
 
 References
