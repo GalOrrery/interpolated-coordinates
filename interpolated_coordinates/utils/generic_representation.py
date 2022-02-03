@@ -34,6 +34,8 @@ _GENERIC_REGISTRY: T.Dict[
 # CODE
 ##############################################################################
 
+# TODO? GenericRepresentationOrDifferential
+
 
 class GenericRepresentation(coord.BaseRepresentation):
     """Generic representation of a point in a 3D coordinate system.
