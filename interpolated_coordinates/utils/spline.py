@@ -84,7 +84,13 @@ import warnings
 import astropy.units as u
 import numpy as np
 import scipy.interpolate as _interp
-from scipy.interpolate.fitpack2 import _curfit_messages, fitpack
+from scipy.interpolate import fitpack
+
+try:
+    # THIRD PARTY
+    from scipy.interpolate.fitpack2 import _curfit_messages
+except ImportError:
+    from scipy.interpolate._fitpack2 import _curfit_messages
 
 # LOCAL
 from interpolated_coordinates._type_hints import UnitType
