@@ -256,7 +256,7 @@ or not it contains an interpolated representation.
          (0.51282051, 0.00202654, -0.29161849, 6.40935614),
          (0.76923077, 0.00195215, -0.28290567, 6.48140523)]>
 
-When wrapping an un-interpolated coordinate, the affine parameter is required.
+However, when wrapping an un-interpolated representation, the affine parameter is required.
 
 .. code-block:: python
 
