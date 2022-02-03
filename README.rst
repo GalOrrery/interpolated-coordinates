@@ -129,6 +129,14 @@ at some arbitrary value, say ``affine=4.873 * u.Myr``, is
         (0.4873, 1.4873, 2.4873)
      (has differentials w.r.t.: 's')>
 
+.. figure:: docs/static_images/irep.png
+    :scale: 50 %
+    :alt: Evaluating the interpolated representation
+    :align: center
+
+    Figure: Evaluating the interpolated representation on a fine grid.
+
+
 The interpolation can be evaluated on a scalar or any shaped |Quantity|
 array, returning a Representation with the same shape.
 
@@ -346,6 +354,13 @@ The same example as above, but with the new class:
 
 
 These splines underpin the interpolated coordinates, above.
+
+.. figure:: docs/static_images/spline.png
+    :scale: 50 %
+    :alt: Evaluating the unit-aware spline
+    :align: center
+
+    Figure: Evaluating a unit-aware spline.
 
 
 Generic Representations
