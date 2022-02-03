@@ -2,18 +2,17 @@
 
 """Interpolated Coordinates, Representations, and SkyCoords.
 
-Astropy coordinate objects are a collection of points.
-This module provides wrappers to interpolate each dimension with an affine
-parameter.
+Astropy `coordinate <astropy.coordinates.SkyCoord>` objects are collections of points.
+This module provides wrappers to interpolate each dimension of a coordinate object with an affine parameter.
 
-For all the following examples we assume the following imports:
+For all the following examples we assume these imports:
 
     >>> import astropy.units as u
     >>> import astropy.coordinates as coord
     >>> import numpy as np
     >>> import interpolated_coordinates as icoord
 
-We will start with interpolated representations.
+We will start with interpolating Representation object.
 
     >>> num = 40
     >>> affine = np.linspace(0, 10, num=num) * u.Myr
