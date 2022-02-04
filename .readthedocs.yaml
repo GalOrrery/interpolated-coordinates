@@ -17,7 +17,7 @@ python:
       path: .
       extra_requirements:
         - docs
-        - all
+        - test
 
 # Don't build any extra formats
 formats: []
