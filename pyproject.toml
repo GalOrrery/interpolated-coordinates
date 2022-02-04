@@ -33,12 +33,15 @@ build-backend = 'setuptools.build_meta'
 
 [project.optional-dependencies]
 test = [
+  "coverage[toml]",
+  "matplotlib",
   "pytest",
   "pytest-astropy",
-  "coverage[toml]"
 ]
 docs = [
-  "sphinx-astropy"
+  "graphviz",
+  "matplotlib",
+  "sphinx-astropy",
 ]
 
 [project.urls]

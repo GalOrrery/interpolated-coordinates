@@ -120,10 +120,10 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
     Parameters
     ----------
-    x : (N,) array_like
+    x : (N,) Quantity-like or array-like
         1-D array of independent input data. Must be increasing;
         must be strictly increasing if `s` is 0.
-    y : (N,) array_like
+    y : (N,) Quantity-like or array-like
         1-D array of dependent input data, of the same length as `x`.
     w : (N,) array_like, optional
         Weights for spline fitting.  Must be positive.  If None (default),
@@ -289,16 +289,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
             bbox[1] = bbox[1].to(self._xunit).value
 
         # Make spline
-        super().__init__(
-            x,
-            y,
-            w=w,
-            bbox=bbox,
-            k=k,
-            s=s,
-            ext=ext,
-            check_finite=check_finite,
-        )
+        super().__init__(x, y, w=w, bbox=bbox, k=k, s=s, ext=ext, check_finite=check_finite)
 
     def validate_input(
         self,
@@ -318,13 +309,8 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
             y = y.to_value(self._yunit)
 
         # then validate with UnivariateSpline method, which works with units!
-        out: T.Tuple[
-            np.ndarray,
-            np.ndarray,
-            np.ndarray,
-            T.List[u.Quantity],
-            T.Union[int, str],
-        ] = super().validate_input(x, y, w, bbox, k, s, ext, check_finite)
+        out: T.Tuple[np.ndarray, np.ndarray, np.ndarray, T.List[u.Quantity], T.Union[int, str]]
+        out = super().validate_input(x, y, w, bbox, k, s, ext, check_finite)
         return out
 
     @classmethod
@@ -550,12 +536,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         ext = 1 if self.ext == 3 else self.ext
         x_unit = self._xunit
         y_unit = self._yunit / self._xunit ** n
-        return self.__class__._from_tck(
-            tck,
-            x_unit=x_unit,
-            y_unit=y_unit,
-            ext=ext,
-        )
+        return self.__class__._from_tck(tck, x_unit=x_unit, y_unit=y_unit, ext=ext)
 
     def antiderivative(self, n: int = 1) -> USwUType:
         r"""Construct a new spline representing this spline's antiderivative.
@@ -604,12 +585,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         tck = fitpack.splantider(self._eval_args, n)
         x_unit = self._xunit
         y_unit = self._yunit * self._xunit ** n
-        return self.__class__._from_tck(
-            tck,
-            x_unit=x_unit,
-            y_unit=y_unit,
-            ext=self.ext,
-        )
+        return self.__class__._from_tck(tck, x_unit=x_unit, y_unit=y_unit, ext=self.ext)
 
 
 # -------------------------------------------------------------------

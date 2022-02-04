@@ -29,6 +29,7 @@
 import datetime
 import os
 import sys
+from configparser import ConfigParser
 from importlib import import_module
 
 try:
@@ -38,10 +39,7 @@ except ImportError:
     print("ERROR: the documentation requires the sphinx-astropy package to be installed")
     sys.exit(1)
 
-# STDLIB
 # Get configuration information from setup.cfg
-from configparser import ConfigParser
-
 conf = ConfigParser()
 
 conf.read([os.path.join(os.path.dirname(__file__), "..", "setup.cfg")])
@@ -66,7 +64,48 @@ exclude_patterns.append("_templates")
 # This is added to the end of RST files - a good place to put substitutions to
 # be used globally.
 rst_epilog += """
+
+.. |Quantity| replace:: :class:`~astropy.units.Quantity`
+
+.. |Frame| replace:: :class:`~astropy.coordinates.BaseCoordinateFrame`
+.. |SkyCoord| replace:: :class:`~astropy.coordinates.SkyCoord`
+
+.. |QTable| replace:: :class:`~astropy.table.QTable`
 """
+
+# Whether to create cross-references for the parameter types in the
+# Parameters, Other Parameters, Returns and Yields sections of the docstring.
+numpydoc_xref_param_type = True
+
+# Words not to cross-reference. Most likely, these are common words used in
+# parameter type descriptions that may be confused for classes of the same
+# name. The base set comes from sphinx-astropy. We add more here.
+numpydoc_xref_ignore.update(
+    {
+        "mixin",
+        "Any",  # aka something that would be annotated with `typing.Any`
+    },
+)
+
+# Mappings to fully qualified paths (or correct ReST references) for the
+# aliases/shortcuts used when specifying the types of parameters.
+# Numpy provides some defaults
+# https://github.com/numpy/numpydoc/blob/b352cd7635f2ea7748722f410a31f937d92545cc/numpydoc/xref.py#L62-L94
+# and a base set comes from sphinx-astropy.
+# so here we mostly need to define Astropy-specific x-refs
+numpydoc_xref_aliases.update(
+    {
+        # python & adjacent
+        "Any": "`~typing.Any`",
+        "number": ":term:`number`",
+        # for astropy
+        "Representation": ":class:`~astropy.coordinates.BaseRepresentation`",
+        "Differential": ":class:`~astropy.coordinates.BaseDifferential`",
+        "CoordinateFrame": ":class:`~astropy.coordinates.BaseCoordinateFrame`",
+    },
+)
+# Add from sphinx-astropy 1) glossary aliases 2) physical types.
+numpydoc_xref_aliases.update(numpydoc_xref_astropy_aliases)
 
 # -- Project information ------------------------------------------------------
 
@@ -133,7 +172,7 @@ html_theme_options = {
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "{0} v{1}".format(project, release)
+html_title = f"{project} v{release}"
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = project + "doc"
@@ -142,37 +181,30 @@ htmlhelp_basename = project + "doc"
 modindex_common_prefix = ["interpolated_coordinates."]
 
 
+automodsumm_inherited_members = True
+
+
 # -- Options for LaTeX output -------------------------------------------------
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [("index", project + ".tex", project + u" Documentation", author, "manual")]
+latex_documents = [("index", project + ".tex", project + " Documentation", author, "manual")]
 
 
 # -- Options for manual page output -------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", project.lower(), project + u" Documentation", [author], 1)]
+man_pages = [("index", project.lower(), project + " Documentation", [author], 1)]
 
-
-# -- Options for the edit_on_github extension ---------------------------------
-
-if setup_cfg.get("edit_on_github").lower() == "true":
-
-    extensions += ["sphinx_astropy.ext.edit_on_github"]
-
-    edit_on_github_project = setup_cfg["github_project"]
-    edit_on_github_branch = "main"
-
-    edit_on_github_source_root = ""
-    edit_on_github_doc_root = "docs"
 
 # -- Resolving issue number to links in changelog -----------------------------
+
 github_issues_url = "https://github.com/{0}/issues/".format(setup_cfg["github_project"])
 
 
 # -- Options for linkcheck output -------------------------------------------
+
 linkcheck_retry = 5
 linkcheck_ignore = [
     r"https://github\.com/nstarman/interpolated-coordinates/(?:issues|pull)/\d+",
