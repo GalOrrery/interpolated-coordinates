@@ -184,20 +184,6 @@ modindex_common_prefix = ["interpolated_coordinates."]
 automodsumm_inherited_members = True
 
 
-# -- Options for LaTeX output -------------------------------------------------
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [("index", project + ".tex", project + " Documentation", author, "manual")]
-
-
-# -- Options for manual page output -------------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [("index", project.lower(), project + " Documentation", [author], 1)]
-
-
 # -- Resolving issue number to links in changelog -----------------------------
 
 github_issues_url = "https://github.com/{0}/issues/".format(setup_cfg["github_project"])
