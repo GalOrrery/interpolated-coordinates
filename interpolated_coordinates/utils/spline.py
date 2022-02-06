@@ -1,22 +1,27 @@
 # -*- coding: utf-8 -*-
 
-"""Splines classes with :mod:`~astropy.units` support.
-
-`scipy` [scipy]_, [Dierckx]_ splines do not support quantities with units.
-The standard workaround solution is to strip the quantities of their units,
-apply the interpolation, then add the units back.
+"""
+A module for scipy splines classes with :mod:`~astropy.units` support.
+`scipy` [scipy]_, [Dierckx]_ splines do not support |Quantities| because
+they do not understand |Unit|. A standard workaround solution when one needs
+to interpolate is to strip quantities of their units, apply the interpolation,
+then add units back.
 
 As an example:
 
+.. code-block:: python
+
     >>> import numpy as np
     >>> import astropy.units as u
-    >>> from scipy.interpolate import InterpolatedUnivariateSpline
     >>> x = np.linspace(-3, 3, 50) * u.s
     >>> y = 8 * u.m / (x.value**2 + 4)
     >>> xs = np.linspace(-2, 2, 10) * u.s  # for evaluating spline
+
+.. code-block:: python
+
+    >>> from scipy.interpolate import InterpolatedUnivariateSpline
     >>> spl = InterpolatedUnivariateSpline(x.to_value(u.s), y.to_value(u.m))
-    >>> y_ntrp = spl(xs.to_value(u.s)) * u.m  # evaluate, adding back units
-    >>> y_ntrp
+    >>> spl(xs.to_value(u.s)) * u.m  # evaluate, adding back units
     <Quantity [1.00000009, 1.24615404, 1.52830261, 1.79999996, 1.97560874,
                1.97560874, 1.79999996, 1.52830261, 1.24615404, 1.00000009] m>
 
@@ -26,20 +31,29 @@ adding process into a unit-aware version of the spline interpolation classes.
 
 The same example as above, but with the new class:
 
+.. code-block:: python
+    :emphasize-lines: 1
+
     >>> from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
     >>> spl = InterpolatedUnivariateSplinewithUnits(x, y)
     >>> spl(xs)
     <Quantity [1.00000009, 1.24615404, 1.52830261, 1.79999996, 1.97560874,
                1.97560874, 1.79999996, 1.52830261, 1.24615404, 1.00000009] m>
 
+Using :class:`~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`,
+interpolation with `~numpy.ndarray` AND |Quantities| inputs just work.
+
+Plotting this example:
+
 .. plot::
    :context: close-figs
    :alt: example spline plot.
 
-    from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
     import numpy as np
     import astropy.units as u
     from astropy.visualization import quantity_support; quantity_support()
+
+    from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
 
     x = np.linspace(-3, 3, num=50) * u.s
     y = 8 * u.m / (x.value**2 + 4)
@@ -53,7 +67,7 @@ The same example as above, but with the new class:
     ax.plot(xs, spl(xs), c="gray", alpha=0.7, lw=3, label="evaluated spline")
     ax.scatter(x, y, c="r", s=25, label="points")
 
-    ax.set_title("Witch of Agnesi (a=1)")
+    ax.set_title("Witch of Agnesi")
     ax.set_xlabel(f"x [{ax.get_xlabel()}]")
     ax.set_ylabel(f"y [{ax.get_ylabel()}]")
     plt.legend()
@@ -93,7 +107,7 @@ except ImportError:
     from scipy.interpolate._fitpack2 import _curfit_messages
 
 # LOCAL
-from interpolated_coordinates._type_hints import UnitType
+from interpolated_coordinates._type_hints import UnitLikeType
 
 __all__ = [
     "UnivariateSplinewithUnits",
@@ -161,6 +175,12 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         do contain infinities or NaNs.
         Default is False.
 
+    x_unit, y_unit : unit-like or None, optional keyword-only
+        The |Unit| of ``x``/``y`` (if not `None`), and to which ``x``/``y``
+        will be converted before the value is used in the underlying
+        interpolation machinery. If ``x``/``y`` does not have units
+        (e.g. is an `~numpy.ndarray`) this cannot not be `None`.
+
     See Also
     --------
     BivariateSpline :
@@ -205,11 +225,10 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
     with ``nan``. A workaround is to use zero weights for not-a-number
     data points:
 
-    >>> from scipy.interpolate import UnivariateSpline
-    >>> x, y = np.array([1, 2, 3, 4]), np.array([1, np.nan, 3, 4])
+    >>> x, y = np.array([1, 2, 3, 4]) * u.m, np.array([1, np.nan, 3, 4]) * u.s
     >>> w = np.isnan(y)
     >>> y[w] = 0.
-    >>> spl = UnivariateSpline(x, y, w=~w)
+    >>> spl = UnivariateSplinewithUnits(x, y, w=~w)
 
     Notice the need to replace a ``nan`` by a numerical value (precise value
     does not matter as long as the corresponding weight is zero.)
@@ -219,12 +238,13 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
     .. plot::
        :context: close-figs
 
+        import astropy.units as u
         import numpy as np
         import matplotlib.pyplot as plt
-        from scipy.interpolate import UnivariateSpline
+        from astropy.visualization import quantity_support; quantity_support()
 
-        x = np.linspace(-3, 3, 50)
-        y = np.exp(-x**2) + 0.1 * np.random.randn(50)
+        x = np.linspace(-3, 3, 50) * u.m
+        y = np.exp(-x.value**2) + 0.1 * np.random.randn(50) << u.s
         plt.plot(x, y, 'ro', ms=5)
 
     Use the default value for the smoothing parameter:
@@ -232,14 +252,17 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
     .. plot::
        :context: close-figs
 
+        import astropy.units as u
         import numpy as np
         import matplotlib.pyplot as plt
-        from scipy.interpolate import UnivariateSpline
+        from astropy.visualization import quantity_support; quantity_support()
 
-        x = np.linspace(-3, 3, 50)
-        y = np.exp(-x**2) + 0.1 * np.random.randn(50)
-        spl = UnivariateSpline(x, y)
-        xs = np.linspace(-3, 3, 1000)
+        from interpolated_coordinates.utils import UnivariateSplinewithUnits
+
+        x = np.linspace(-3, 3, 50) * u.m
+        y = np.exp(-x.value**2) + 0.1 * np.random.randn(50) << u.s
+        spl = UnivariateSplinewithUnits(x, y)
+        xs = np.linspace(-3, 3, 1000) * u.m
         plt.plot(xs, spl(xs), 'g', lw=3)
 
     Manually change the amount of smoothing:
@@ -247,13 +270,16 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
     .. plot::
        :context: close-figs
 
+        import astropy.units as u
         import numpy as np
         import matplotlib.pyplot as plt
-        from scipy.interpolate import UnivariateSpline
+        from astropy.visualization import quantity_support; quantity_support()
 
-        x = np.linspace(-3, 3, 50)
-        y = np.exp(-x**2) + 0.1 * np.random.randn(50)
-        spl = UnivariateSpline(x, y)
+        from interpolated_coordinates.utils import UnivariateSplinewithUnits
+
+        x = np.linspace(-3, 3, 50) * u.m
+        y = np.exp(-x.value**2) + 0.1 * np.random.randn(50) << u.s
+        spl = UnivariateSplinewithUnits(x, y)
 
         spl.set_smoothing_factor(0.5)
         plt.plot(xs, spl(xs), 'b', lw=3)
@@ -271,17 +297,17 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         ext: T.Union[int, str, None] = 0,
         check_finite: bool = False,
         *,
-        x_unit: T.Optional[UnitType] = None,
-        y_unit: T.Optional[UnitType] = None,
+        x_unit: T.Optional[UnitLikeType] = None,
+        y_unit: T.Optional[UnitLikeType] = None,
     ):
         # The unit for x and y, respectively. If None (default), gets
         # the units from x and y.
-        self._xunit = x_unit or x.unit
-        self._yunit = y_unit or y.unit
+        self._xunit = u.Unit(x_unit) if x_unit is not None else x.unit
+        self._yunit = u.Unit(y_unit) if y_unit is not None else y.unit
 
         # Make x, y to value, so can create IUS as normal
-        x = x.to_value(x_unit)
-        y = y.to_value(y_unit)
+        x = (x << self._xunit).value
+        y = (y << self._yunit).value
 
         if bbox[0] is not None:
             bbox[0] = bbox[0].to(self._xunit).value
@@ -291,11 +317,21 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         # Make spline
         super().__init__(x, y, w=w, bbox=bbox, k=k, s=s, ext=ext, check_finite=check_finite)
 
+    @property
+    def x_unit(self):
+        """|Unit| of the independent data."""
+        return self._xunit
+
+    @property
+    def y_unit(self):
+        """|Unit| of the dependent data."""
+        return self._yunit
+
     def validate_input(
         self,
-        x: np.ndarray,
-        y: np.ndarray,
-        w: np.ndarray,
+        x: T.Union[np.ndarray, u.Quantity],
+        y: T.Union[np.ndarray, u.Quantity],
+        w: T.Union[np.ndarray, u.Quantity],
         bbox: BBoxType,
         k: int,
         s: float,
@@ -317,14 +353,14 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
     def _from_tck(
         cls,
         tck: T.Tuple[np.ndarray, np.ndarray, np.ndarray],
-        x_unit: UnitType,
-        y_unit: UnitType,
+        x_unit: UnitLikeType,
+        y_unit: UnitLikeType,
         ext: int = 0,
     ) -> USwUType:
         """Construct a spline object from given tck."""
         self: USwUType = super()._from_tck(tck, ext=ext)
-        self._xunit = x_unit
-        self._yunit = y_unit
+        self._xunit = u.Unit(x_unit)
+        self._yunit = u.Unit(y_unit)
 
         return self
 
@@ -369,7 +405,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
         Parameters
         ----------
-        x : |Quantity| array_like
+        x : ndarray or Quantity array-like
             A 1-D array of points at which to return the value of the smoothed
             spline or its derivatives. Note: `x` can be unordered but the
             evaluation is more efficient if `x` is (partially) ordered.
@@ -389,10 +425,11 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
         Returns
         -------
-        y : |Quantity| array_like
-            Evaluated spline with units ``._yunit``. Same shape as `x`.
+        y : Quantity array_like
+            Evaluated spline with units ``y_unit``. Same shape as `x`.
         """
-        y: np.ndarray = super().__call__((x << self._xunit).value, nu=nu, ext=ext)
+        x = (x << self._xunit).value
+        y: np.ndarray = super().__call__(x, nu=nu, ext=ext)
         yq: u.Quantity = y << self._yunit
         return yq
 
@@ -421,9 +458,9 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
         Parameters
         ----------
-        a : |Quantity|
+        a : Quantity
             Lower limit of integration.
-        b : |Quantity|
+        b : Quantity
             Upper limit of integration.
 
         Returns
@@ -440,7 +477,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         >>> spl.integral(0, 3)
         9.0
 
-        which agrees with :math:`\\int x^2 dx = x^3 / 3` between the limits
+        which agrees with :math:`\int x^2 dx = x^3 / 3` between the limits
         of 0 and 3.
 
         A caveat is that this routine assumes the spline to be zero outside of
@@ -468,7 +505,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
         Returns
         -------
-        der : ndarray, shape(k+1,)
+        der : ndarray of Quantity object, shape(k+1,)
             Derivatives of the orders 0 to k.
 
         Examples
@@ -548,7 +585,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
         Returns
         -------
-        spline : UnivariateSplineWithUnits
+        spline : `~interpolated_coordinates.utils.UnivariateSplinewithUnits`
             Spline of order k2=k+n representing the antiderivative of this
             spline.
 
@@ -630,9 +667,11 @@ class InterpolatedUnivariateSplinewithUnits(UnivariateSplinewithUnits):
         do contain infinities or NaNs.
         Default is False.
 
-    x_unit, y_unit : `~astropy.units.UnitBase`, optionl, keyword-only
-        The unit for x and y, respectively. If None (default), gets
-        the units from x and y.
+    x_unit, y_unit : unit-like or None, optional keyword-only
+        The |Unit| of ``x``/``y`` (if not `None`), and to which ``x``/``y``
+        will be converted before the value is used in the underlying
+        interpolation machinery. If ``x``/``y`` does not have units
+        (e.g. is an `~numpy.ndarray`) this cannot not be `None`.
 
     See Also
     --------
@@ -659,9 +698,11 @@ class InterpolatedUnivariateSplinewithUnits(UnivariateSplinewithUnits):
     .. plot::
         :context: close-figs
 
-        import numpy as np
         import astropy.units as u
+        import numpy as np
         import matplotlib.pyplot as plt
+        from astropy.visualization import quantity_support; quantity_support()
+
         from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
 
         x = np.linspace(-3, 3, 50) * u.s
@@ -688,17 +729,17 @@ class InterpolatedUnivariateSplinewithUnits(UnivariateSplinewithUnits):
         ext: int = 0,
         check_finite: bool = False,
         *,
-        x_unit: T.Optional[UnitType] = None,
-        y_unit: T.Optional[UnitType] = None,
+        x_unit: T.Optional[UnitLikeType] = None,
+        y_unit: T.Optional[UnitLikeType] = None,
     ):
         # The unit for x and y, respectively. If None (default), gets
         # the units from x and y.
-        self._xunit = x_unit or x.unit
-        self._yunit = y_unit or y.unit
+        self._xunit = u.Unit(x_unit) if x_unit is not None else x.unit
+        self._yunit = u.Unit(y_unit) if y_unit is not None else y.unit
 
         # Make x, y to value, so can create IUS as normal
-        x = x.to_value(x_unit)
-        y = y.to_value(y_unit)
+        x = (x << self._xunit).value
+        y = (y << self._yunit).value
 
         if bbox[0] is not None:
             bbox[0] = bbox[0].to(self._xunit).value
@@ -765,10 +806,16 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
         do contain infinities or NaNs.
         Default is False.
 
+    x_unit, y_unit : unit-like or None, optional keyword-only
+        The |Unit| of ``x``/``y`` (if not `None`), and to which ``x``/``y``
+        will be converted before the value is used in the underlying
+        interpolation machinery. If ``x``/``y`` does not have units
+        (e.g. is an `~numpy.ndarray`) this cannot not be `None`.
+
     Raises
     ------
     ValueError
-        If the interior knots do not satisfy the Schoenberg-Whitney conditions
+        If the interior knots do not satisfy the Schoenberg-Whitney conditions.
 
     See Also
     --------
@@ -800,24 +847,34 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
     --------
     >>> import numpy as np
     >>> import astropy.units as u
-    >>> from scipy.interpolate import LSQUnivariateSpline, UnivariateSpline
     >>> import matplotlib.pyplot as plt
-    >>> x = np.linspace(-3, 3, 50)
-    >>> y = np.exp(-x**2) + 0.1 * np.random.randn(50)
+    >>> from interpolated_coordinates.utils import LSQUnivariateSplinewithUnits
+
+    >>> x = np.linspace(-3, 3, 50) * u.m
+    >>> y = np.exp(-x.value**2) + 0.1 * np.random.randn(50) << u.s
 
     Fit a smoothing spline with a pre-defined internal knots:
 
     >>> t = [-1, 0, 1]
-    >>> spl = LSQUnivariateSpline(x, y, t)
+    >>> spl = LSQUnivariateSplinewithUnits(x, y, t)
 
     .. plot::
        :context: close-figs
 
-        import numpy as np
         import astropy.units as u
+        import numpy as np
         import matplotlib.pyplot as plt
+        from astropy.visualization import quantity_support; quantity_support()
 
-        xs = np.linspace(-3, 3, 1000) * u.s
+        from interpolated_coordinates.utils import LSQUnivariateSplinewithUnits
+
+        x = np.linspace(-3, 3, 50) * u.m
+        y = np.exp(-x.value**2) + 0.1 * np.random.randn(50) << u.s
+
+        t = [-1, 0, 1]
+        spl = LSQUnivariateSplinewithUnits(x, y, t)
+
+        xs = np.linspace(-3, 3, 1000) * u.m
         plt.plot(x, y, 'ro', ms=5)
         plt.plot(xs, spl(xs), 'g-', lw=3)
 
@@ -828,12 +885,12 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
 
     Constructing lsq spline using the knots from another spline:
 
-    >>> x = np.arange(10)
-    >>> s = UnivariateSpline(x, x, s=0)
+    >>> x = np.arange(10) * u.m
+    >>> s = UnivariateSplinewithUnits(x, x, s=0)
     >>> s.get_knots()
     array([0., 2., 3., 4., 5., 6., 7., 9.])
     >>> knt = s.get_knots()
-    >>> s1 = LSQUnivariateSpline(x, x, knt[1:-1])    # Chop 1st and last knot
+    >>> s1 = LSQUnivariateSplinewithUnits(x, x, knt[1:-1])  # Chop 1st and last knot
     >>> s1.get_knots()
     array([0., 2., 3., 4., 5., 6., 7., 9.])
     """
@@ -849,17 +906,17 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
         ext: int = 0,
         check_finite: bool = False,
         *,
-        x_unit: T.Optional[UnitType] = None,
-        y_unit: T.Optional[UnitType] = None,
+        x_unit: T.Optional[UnitLikeType] = None,
+        y_unit: T.Optional[UnitLikeType] = None,
     ) -> None:
         # The unit for x and y, respectively. If None (default), gets
         # the units from x and y.
-        self._xunit = x_unit or x.unit
-        self._yunit = y_unit or y.unit
+        self._xunit = u.Unit(x_unit) if x_unit is not None else x.unit
+        self._yunit = u.Unit(y_unit) if y_unit is not None else y.unit
 
         # Make x, y to value, so can create IUS as normal
-        x = x.to_value(x_unit)
-        y = y.to_value(y_unit)
+        x = (x << self._xunit).value
+        y = (y << self._yunit).value
 
         if bbox[0] is not None:
             bbox[0] = bbox[0].to(self._xunit).value
