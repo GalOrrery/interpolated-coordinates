@@ -65,7 +65,9 @@ exclude_patterns.append("_templates")
 # be used globally.
 rst_epilog += """
 
+.. |Unit| replace:: :class:`~astropy.units.Unit`
 .. |Quantity| replace:: :class:`~astropy.units.Quantity`
+.. |Quantities| replace:: :class:`~astropy.units.Quantity`
 
 .. |Frame| replace:: :class:`~astropy.coordinates.BaseCoordinateFrame`
 .. |SkyCoord| replace:: :class:`~astropy.coordinates.SkyCoord`
@@ -99,6 +101,8 @@ numpydoc_xref_aliases.update(
         "Any": "`~typing.Any`",
         "number": ":term:`number`",
         # for astropy
+        "Unit": ":class:`~astropy.units.Unit`",
+        "Quantity": ":class:`~astropy.units.Quantity`",
         "Representation": ":class:`~astropy.coordinates.BaseRepresentation`",
         "Differential": ":class:`~astropy.coordinates.BaseDifferential`",
         "CoordinateFrame": ":class:`~astropy.coordinates.BaseCoordinateFrame`",
