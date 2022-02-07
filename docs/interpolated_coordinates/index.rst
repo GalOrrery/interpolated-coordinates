@@ -2,7 +2,7 @@
 Interpolated Coordinates
 ************************
 
-.. automodule:: interpolated_coordinates.core
+.. automodule:: interpolated_coordinates
    :noindex:
 
 
