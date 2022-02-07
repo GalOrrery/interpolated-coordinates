@@ -1,6 +1,39 @@
 # -*- coding: utf-8 -*-
 
-"""Generic Coordinates."""
+"""
+Generic versions of the |Representation| in :mod:`astropy`, assuming less about
+the constituent dimensions than their astropy counterparts.
+This can be useful for working with phase-spaces that are not real-space
+positions (or derivates thereof). However, care should be taken when using many
+of the methods of these generic representations since they inherit from the
+astropy real-space representation machinery.
+
+You will probably not be instantiating these classes directly, but encountering
+them from :mod:`interpolated_coordinates` classes like
+:class:`interpolated_coordinates.InterpolatedSkyCoord`.
+However, one can get and use the classes, with all the above-noted caveats:
+
+    >>> import astropy.units as u
+    >>> from interpolated_coordinates.utils.generic_representation import GenericCartesianRepresentation
+
+    >>> r = GenericCartesianRepresentation(1, 2, 3)
+    >>> r
+    <GenericCartesianRepresentation (x, y, z) [dimensionless]
+        (1., 2., 3.)>
+    >>> r.x
+    '<Quantity 1.>'
+
+The real convenience lies with differentials, which can go to arbitrary order.
+Recalling that many of the methods will give incorrect results, these classes
+are primarily useful for consistent and familiar data storage.
+
+    >>> from interpolated_coordinates.utils.generic_representation import GenericSpherical2ndDifferential
+
+    >>> d2 = GenericSpherical2ndDifferential(1 * u.rad/u.s**2, 2 * u.rad/u.s**2, 3 * u.km/u.s**2)
+    >>> d2
+    <GenericSpherical2ndDifferential (d_lon, d_lat, d_distance) in (rad / s2, rad / s2, km / s2)
+        (10., 10., 10.)>
+"""
 
 ##############################################################################
 # IMPORTS
@@ -8,6 +41,8 @@
 from __future__ import annotations
 
 # STDLIB
+import functools
+import inspect
 import sys
 import typing as T
 
@@ -34,17 +69,19 @@ _GENERIC_REGISTRY: T.Dict[
 # CODE
 ##############################################################################
 
-# TODO? GenericRepresentationOrDifferential
+
+class GenericRepresentationOrDifferential(coord.BaseRepresentationOrDifferential):
+    pass
 
 
-class GenericRepresentation(coord.BaseRepresentation):
+class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDifferential):
     """Generic representation of a point in a 3D coordinate system.
 
     Parameters
     ----------
     q1, q2, q3 : `~astropy.units.Quantity` or subclass
         The components of the 3D points. The names are the keys and the
-        subclasses the values of the attr_classes attribute.
+        subclasses the values of the ``attr_classes`` attribute.
 
     differentials : dict, `~astropy.coordinates.BaseDifferential`, optional
         Any differential classes that should be associated with this
@@ -70,7 +107,6 @@ class GenericRepresentation(coord.BaseRepresentation):
     ``represent_as`` method. If one wants to use an associated differential
     class, one should also define ``unit_vectors`` and ``scale_factors``
     methods (see those methods for details).
-
     """
 
     attr_classes = dict(q1=u.Quantity, q2=u.Quantity, q3=u.Quantity)
@@ -103,20 +139,20 @@ class GenericRepresentation(coord.BaseRepresentation):
         elif rep_cls in _GENERIC_REGISTRY:
             cls = _GENERIC_REGISTRY[rep_cls]
 
-        # 3) Need to make the generic class
+        # 3) Need to dynamically define the generic class
         else:
-            # dynamically define class
-            # name: Generic{X}
-            # bases: both generic and actual representation
+            name = f"Generic{rep_cls.__name__}"
+            bases = (GenericRepresentation, rep_cls)
+
             # attributes: copies `attr_classes`
-            cls = T.cast(
-                GenericRepresentation,
-                type(
-                    f"Generic{rep_cls.__name__}",
-                    (GenericRepresentation, rep_cls),
-                    dict(attr_classes=rep_cls.attr_classes),
-                ),
-            )
+            attrs_meths = dict(attr_classes=rep_cls.attr_classes)
+            # add link from `qX` to the attr method  # TODO!
+            # for i, k in enumerate(rep_cls.attr_classes.keys()):
+            #     def get_attr(self):
+            #         return getattr(self, f"_{k}")
+            #     attrs_meths[f"_q{i}"] = property(get_attr)
+
+            cls = T.cast(GenericRepresentation, type(name, bases, attrs_meths))
 
             # cache b/c can only define the same Rep/Dif once
             _GENERIC_REGISTRY[rep_cls] = cls
@@ -150,7 +186,7 @@ def _ordinal(n: int) -> str:
     return str(n) + "tsnrhtdd"[i::4]  # noqa: E203
 
 
-class GenericDifferential(coord.BaseDifferential):
+class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDifferential):
     r"""A base class representing differentials of representations.
 
     These represent differences or derivatives along each component.
@@ -165,7 +201,6 @@ class GenericDifferential(coord.BaseDifferential):
     copy : bool, optional
         If `True` (default), arrays will be copied. If `False`, arrays will
         be references, though possibly broadcast to ensure matching shapes.
-
     """
 
     base_representation: coord.BaseRepresentation = GenericRepresentation
@@ -220,22 +255,17 @@ class GenericDifferential(coord.BaseDifferential):
 
         # B) make generic
         else:
+            bases = (GenericDifferential, dif_cls)
+
             # get base representation from differential class.
             # and then get the generic form
             generic_base = GenericRepresentation._make_generic_cls(dif_cls.base_representation)
 
+            # attributes: copies `attr_classes`
+            attrs_meths = dict(attr_classes=dif_cls.attr_classes, base_representation=generic_base)
+
             # make generic differential
-            # name: constructed in 3)
-            # bases: both generic and actual differential
-            # attributes: attr_classes, base_representation
-            cls = T.cast(
-                GenericDifferential,
-                type(
-                    name,
-                    (GenericDifferential, dif_cls),
-                    dict(attr_classes=dif_cls.attr_classes, base_representation=generic_base),
-                ),
-            )
+            cls = T.cast(GenericDifferential, type(name, bases, attrs_meths))
 
             # cache, either by class or by name
             _GENERIC_REGISTRY[dif_cls if n == 1 else name] = cls
@@ -297,5 +327,56 @@ class GenericDifferential(coord.BaseDifferential):
         return cls
 
 
-##############################################################################
-# END
+# ===================================================================
+
+
+def __getattr__(name: str) -> type:
+    """Get a generic direct subclass of an Astropy representation.
+
+    Parameters
+    ----------
+    name : str
+
+    Returns
+    -------
+    type
+
+    Raises
+    ------
+    AttributeError
+        If `name` doesn't start with "Generic", the "Generic"-removed name is
+        not for a :class:`~astropy.coordinates.BaseRepresentation` or
+        :class:`~astropy.coordinates.BaseDifferential`.
+    """
+    # TODO! be able to do higher order differentials
+    if name.startswith("Generic"):
+        name = name.replace("Generic", "")
+    if name.endswith("Differential"):  # strip the ordinal
+        # Get the type, e.g. Cartesian
+        i: int = len("Differential")
+        kind: str = functools.reduce(lambda k, n: k.split(n)[0], "0123456789", name[:-i])
+        # Get order of the differential
+        ord: str = functools.reduce(lambda o, s: o.split(s)[0], "tsnrhd", name[len(kind) : -i])
+        n: int = int(ord) if ord else 1  # 1st derivative is an empty string
+
+        name = kind + "Differential"
+
+    cls: T.Union[coord.RepresentationOrDifferential, T.Any]
+    if (cls := getattr(coord, name, False)) :
+        generic_cls: GenericRepresentationOrDifferential
+        if inspect.isclass(cls) and issubclass(cls, coord.BaseRepresentation):
+            generic_cls = GenericRepresentation._make_generic_cls(cls)
+        elif inspect.isclass(cls) and issubclass(cls, coord.BaseDifferential):
+            generic_cls = GenericDifferential._make_generic_cls(cls, n=n)
+        else:
+            raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+        return generic_cls
+
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+# def __dir__():
+#     dir_out = list(globals())
+#     []
+#     return sorted(dir_out + __all__ + )
