@@ -102,9 +102,9 @@ from scipy.interpolate import fitpack
 
 try:
     # THIRD PARTY
-    from scipy.interpolate.fitpack2 import _curfit_messages
-except ImportError:
     from scipy.interpolate._fitpack2 import _curfit_messages
+except ModuleNotFoundError:  # scipy < 1.8
+    from scipy.interpolate.fitpack2 import _curfit_messages
 
 # LOCAL
 from interpolated_coordinates._type_hints import UnitLikeType
