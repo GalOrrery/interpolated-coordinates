@@ -32,7 +32,7 @@ are primarily useful for consistent and familiar data storage.
     >>> d2 = GenericSpherical2ndDifferential(1 * u.rad/u.s**2, 2 * u.rad/u.s**2, 3 * u.km/u.s**2)
     >>> d2
     <GenericSpherical2ndDifferential (d_lon, d_lat, d_distance) in (rad / s2, rad / s2, km / s2)
-        (10., 10., 10.)>
+        (1., 2., 3.)>
 """
 
 ##############################################################################

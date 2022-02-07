@@ -915,9 +915,10 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
         self._xunit = u.Unit(x_unit) if x_unit is not None else x.unit
         self._yunit = u.Unit(y_unit) if y_unit is not None else y.unit
 
-        # Make x, y to value, so can create IUS as normal
+        # Make x, y, t to value, so can create IUS as normal
         x = (x << self._xunit).value
         y = (y << self._yunit).value
+        t = (t << self._xunit).value
 
         if bbox[0] is not None:
             bbox[0] = bbox[0].to(self._xunit).value

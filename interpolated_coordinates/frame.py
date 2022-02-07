@@ -15,8 +15,12 @@ from astropy.utils.decorators import format_doc
 
 # LOCAL
 from . import _type_hints as TH
+from .representation import (
+    _UNIT_DIF_TYPES,
+    InterpolatedBaseRepresentationOrDifferential,
+    InterpolatedRepresentation,
+)
 from .utils import InterpolatedUnivariateSplinewithUnits as IUSU
-from .representation import _UNIT_DIF_TYPES, InterpolatedBaseRepresentationOrDifferential, InterpolatedRepresentation
 
 __all__ = ["InterpolatedCoordinateFrame", "InterpolatedSkyCoord"]
 
@@ -24,6 +28,7 @@ __all__ = ["InterpolatedCoordinateFrame", "InterpolatedSkyCoord"]
 ##############################################################################
 # CODE
 ##############################################################################
+
 
 class InterpolatedCoordinateFrame:
     """Wrapper for Coordinate Frame, adding affine interpolations.
