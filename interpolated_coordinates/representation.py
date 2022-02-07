@@ -316,8 +316,7 @@ class InterpolatedBaseRepresentationOrDifferential:
     def clear_derivatives(self: IRoDType) -> IRoDType:
         """Return self, clearing cached derivatives."""
         if hasattr(self, "_derivatives"):
-            keys = tuple(self._derivatives.keys())
-            for key in keys:
+            for key in tuple(self._derivatives.keys()):  # iter over fixed keys list
                 if key.startswith("affine "):
                     self._derivatives.pop(key)
         return self
@@ -408,12 +407,9 @@ class InterpolatedBaseRepresentationOrDifferential:
         return len(self.data)
 
     def __repr__(self) -> str:
-        """String Representation, adding interpolation information."""
+        """String representation, adding interpolation information."""
         prefixstr = "    "
-        values = rfn.merge_arrays(
-            (self.affine.value, self.data._values),
-            flatten=True,
-        )
+        values = rfn.merge_arrays((self.affine.value, self.data._values), flatten=True)
         arrstr = _array2string(values, prefix=prefixstr)
 
         diffstr = ""

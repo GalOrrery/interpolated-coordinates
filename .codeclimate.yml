@@ -3,3 +3,8 @@ checks:
   file-lines:
     config:
       threshold: 1000
+  argument-count:
+    config:
+      threshold: 6
+  method-count:
+    enabled: false
