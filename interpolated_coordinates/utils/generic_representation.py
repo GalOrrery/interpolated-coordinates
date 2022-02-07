@@ -348,7 +348,6 @@ def __getattr__(name: str) -> type:
         not for a :class:`~astropy.coordinates.BaseRepresentation` or
         :class:`~astropy.coordinates.BaseDifferential`.
     """
-    # TODO! be able to do higher order differentials
     if name.startswith("Generic"):
         name = name.replace("Generic", "")
     if name.endswith("Differential"):  # strip the ordinal
@@ -356,13 +355,14 @@ def __getattr__(name: str) -> type:
         i: int = len("Differential")
         kind: str = functools.reduce(lambda k, n: k.split(n)[0], "0123456789", name[:-i])
         # Get order of the differential
-        ord: str = functools.reduce(lambda o, s: o.split(s)[0], "tsnrhd", name[len(kind) : -i])
+        j: int = len(kind)
+        ord: str = functools.reduce(lambda o, s: o.split(s)[0], "tsnrhd", name[j:-i])
         n: int = int(ord) if ord else 1  # 1st derivative is an empty string
 
         name = kind + "Differential"
 
     cls: T.Union[coord.RepresentationOrDifferential, T.Any]
-    if (cls := getattr(coord, name, False)) :
+    if cls := getattr(coord, name, False):
         generic_cls: GenericRepresentationOrDifferential
         if inspect.isclass(cls) and issubclass(cls, coord.BaseRepresentation):
             generic_cls = GenericRepresentation._make_generic_cls(cls)
