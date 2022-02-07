@@ -881,7 +881,7 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
     Check the knot vector:
 
     >>> spl.get_knots()
-    array([-3., -1., 0., 1., 3.])
+    <Quantity [-3., -1.,  0.,  1.,  3.] m>
 
     Constructing lsq spline using the knots from another spline:
 

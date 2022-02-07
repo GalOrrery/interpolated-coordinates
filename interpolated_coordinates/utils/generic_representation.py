@@ -21,7 +21,7 @@ However, one can get and use the classes, with all the above-noted caveats:
     <GenericCartesianRepresentation (x, y, z) [dimensionless]
         (1., 2., 3.)>
     >>> r.x
-    '<Quantity 1.>'
+    <Quantity 1.>
 
 The real convenience lies with differentials, which can go to arbitrary order.
 Recalling that many of the methods will give incorrect results, these classes
