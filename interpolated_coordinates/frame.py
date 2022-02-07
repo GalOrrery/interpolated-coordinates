@@ -324,6 +324,9 @@ class InterpolatedCoordinateFrame:
     def _data_repr(self) -> str:
         """Returns a string representation of the coordinate data.
 
+        This method is modified from the original to include the affine
+        parameter.
+
         Returns
         -------
         str
@@ -374,8 +377,6 @@ class InterpolatedCoordinateFrame:
         # else:  # uncomment when encounter
         #     data = self.frame.data
         #     data_repr = repr(self.data)
-
-        # /if
 
         data_cls_name = "Interpolated" + data.__class__.__name__
         if data_repr.startswith("<" + data_cls_name):
