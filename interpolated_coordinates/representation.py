@@ -45,6 +45,9 @@ IDType = T.TypeVar("IDType", bound="InterpolatedDifferential")
 DType = T.TypeVar("DType", bound=r.BaseDifferential)
 
 
+_op_msg = "can only {} {} if the interpolation variables are the same."
+
+
 ##############################################################################
 # CODE
 ##############################################################################
@@ -463,8 +466,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                msg = f"can only add {self._class_} if the interpolation variables are the same."
-                raise ValueError(msg)
+                raise ValueError(_op_msg.format("add", self._class_))
         # Add, then re-interpolate
         return self._realize_class(self.data.__add__(other), self.affine)
 
@@ -481,10 +483,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                msg = (
-                    f"can only subtract {self._class_} if the interpolation variables are the same."
-                )
-                raise ValueError(msg)
+                raise ValueError(_op_msg.format("subtract", self._class_))
         # Subtract, then re-interpolate
         return self._realize_class(self.data.__sub__(other), self.affine)
 
@@ -501,10 +500,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                msg = (
-                    f"can only multiply {self._class_} if the interpolation variables are the same."
-                )
-                raise ValueError(msg)
+                raise ValueError(_op_msg.format("multiply", self._class_))
         # Multiply, then re-interpolate
         return self._realize_class(self.data.__mul__(other), self.affine)
 
@@ -521,8 +517,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                msg = f"can only divide {self._class_} if the interpolation variables are the same."
-                raise ValueError(msg)
+                raise ValueError(_op_msg.format("divide", self._class_))
         # Divide, then re-interpolate
         return self._realize_class(self.data.__truediv__(other), self.affine)
 
