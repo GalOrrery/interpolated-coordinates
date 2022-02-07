@@ -69,6 +69,7 @@ rst_epilog += """
 .. |Quantity| replace:: :class:`~astropy.units.Quantity`
 .. |Quantities| replace:: :class:`~astropy.units.Quantity`
 
+.. |Representation| replace:: :class:`~astropy.coordinates.BaseRepresentation`
 .. |Frame| replace:: :class:`~astropy.coordinates.BaseCoordinateFrame`
 .. |SkyCoord| replace:: :class:`~astropy.coordinates.SkyCoord`
 
