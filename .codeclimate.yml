@@ -11,3 +11,6 @@ checks:
   complex-logic:
     config:
       threshold: 10
+  method-complexity:
+    config:
+      threshold: 10
