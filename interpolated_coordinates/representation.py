@@ -95,9 +95,7 @@ def _infer_derivative_type(
     If it can't infer the correct differential class, defaults
     to `~interpolated_coordinates.utils.GenericDifferential`.
 
-    Checks compatible differentials for classes with matching
-    names.
-
+    Checks compatible differentials for classes with matching names.
 
     Parameters
     ----------
@@ -137,14 +135,11 @@ class InterpolatedBaseRepresentationOrDifferential:
 
     .. todo::
 
-        override all the methods, mapping to underlying Representation
-
-        figure out how to do ``from_cartesian`` as a class method
-
-        get ``X_interp`` as properties. Need to do ``__dict__`` manipulation,
-        like BaseCoordinateFrame
-
-        pass through derivative_type in all methods!
+        - override all the methods, mapping to underlying Representation
+        - figure out how to do ``from_cartesian`` as a class method
+        - get ``X_interp`` as properties. Need to do ``__dict__`` manipulation,
+          like BaseCoordinateFrame
+        - pass through derivative_type in all methods!
 
     Parameters
     ----------
@@ -155,7 +150,7 @@ class InterpolatedBaseRepresentationOrDifferential:
     interps : Mapping or None (optional, keyword-only)
         Has same structure as a Representation
 
-        .. code-block::
+        .. code-block:: text
 
             dict(component name: interpolation,
                 ...
@@ -183,9 +178,9 @@ class InterpolatedBaseRepresentationOrDifferential:
     ValueError
         If `rep` is a BaseRepresentationOrDifferential class, not instance
         If affine shape is not 1-D.
-        If affine is not same length as `rep`
+        If affine is not same length as `rep`.
     TypeError
-        If `rep` not not type BaseRepresentationOrDifferential
+        If `rep` not not type BaseRepresentationOrDifferential.
     """
 
     def __new__(cls: T.Type[IRoDType], *args: T.Any, **kwargs: T.Any) -> IRoDType:
@@ -259,7 +254,6 @@ class InterpolatedBaseRepresentationOrDifferential:
                     if isinstance(differential, InterpolatedDifferential):
                         d_derivative_type = differential.derivative_type
                         differential = differential.data
-
                     else:
                         d_derivative_type = None
 
@@ -323,7 +317,6 @@ class InterpolatedBaseRepresentationOrDifferential:
             for key in keys:
                 if key.startswith("affine "):
                     self._derivatives.pop(key)
-
         return self
 
     def derivative(self, n: int = 1) -> InterpolatedDifferential:
@@ -470,14 +463,10 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                raise ValueError(
-                    f"Can only add two {self._class_}"
-                    + " if the interpolation variables are the same.",
-                )
-        # Add
-        newrep = self.data.__add__(other)
-        # Add re-interpolate
-        return self._realize_class(newrep, self.affine)
+                msg = f"can only add {self._class_} if the interpolation variables are the same."
+                raise ValueError(msg)
+        # Add, then re-interpolate
+        return self._realize_class(self.data.__add__(other), self.affine)
 
     def __sub__(
         self: IRoDType,
@@ -492,14 +481,12 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                raise ValueError(
-                    f"Can only subtract two {self._class_}"
-                    + " if the interpolation variables are the same.",
+                msg = (
+                    f"can only subtract {self._class_} if the interpolation variables are the same."
                 )
-        # Subtract
-        newrep = self.data.__sub__(other)
-        # And re-interpolate
-        return self._realize_class(newrep, self.affine)
+                raise ValueError(msg)
+        # Subtract, then re-interpolate
+        return self._realize_class(self.data.__sub__(other), self.affine)
 
     def __mul__(
         self: IRoDType,
@@ -514,14 +501,12 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                raise ValueError(
-                    f"Can only multiply two {self._class_}"
-                    + " if the interpolation variables are the same.",
+                msg = (
+                    f"can only multiply {self._class_} if the interpolation variables are the same."
                 )
-        # Multiply
-        newrep = self.data.__mul__(other)
-        # And re-interpolate
-        return self._realize_class(newrep, self.affine)
+                raise ValueError(msg)
+        # Multiply, then re-interpolate
+        return self._realize_class(self.data.__mul__(other), self.affine)
 
     def __truediv__(
         self: IRoDType,
@@ -536,16 +521,10 @@ class InterpolatedBaseRepresentationOrDifferential:
         """
         if isinstance(other, InterpolatedBaseRepresentationOrDifferential):
             if not array_equal(other.affine, self.affine):
-                raise ValueError(
-                    f"Can only divide two {self._class_}"
-                    + " if the interpolation variables are the same.",
-                )
-
-        # add
-        newrep = self.data.__truediv__(other)
-
-        # now re-interpolate
-        return self._realize_class(newrep, self.affine)
+                msg = f"can only divide {self._class_} if the interpolation variables are the same."
+                raise ValueError(msg)
+        # Divide, then re-interpolate
+        return self._realize_class(self.data.__truediv__(other), self.affine)
 
     # def _apply(self, method, *args, **kwargs):  # TODO!
 
@@ -628,7 +607,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         interps = copy.deepcopy(self._interps)
         return self._class_(
             data,
-            self.affine,
+            affine=self.affine,
             interps=interps,
             derivative_type=self.derivative_type,
             **self._interp_kwargs,
@@ -643,12 +622,10 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
 
     .. todo::
 
-        override all the methods, mapping to underlying Representation
-
-        figure out how to do ``from_cartesian`` as a class method
-
-        get ``X_interp`` as properties. Need to do __dict__ manipulation,
-        like BaseCoordinateFrame
+        - override all the methods, mapping to underlying Representation
+        - figure out how to do ``from_cartesian`` as a class method
+        - get ``X_interp`` as properties. Need to do __dict__ manipulation,
+          like BaseCoordinateFrame
 
     Parameters
     ----------
@@ -661,17 +638,12 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
 
         .. code-block:: text
 
-            dict(
-                component name: interpolation,
-                ...
-                "differentials": dict(
-                    "s" : dict(
-                        component name: interpolation,
-                        ...
-                    ),
-                    ...
-                )
-            )
+            dict(component name: interpolation,
+                 ...
+                 "differentials": dict(
+                     "s" : dict(component name: interpolation,
+                                ...),
+                     ...))
 
     **interp_kwargs
         Only used if `interps` is None.
@@ -713,9 +685,8 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
         """
         if affine is None:  # If None, returns representation as-is.
             return self.data
-        # else:
 
-        affine = u.Quantity(affine)  # need to ensure Quantity
+        affine = u.Quantity(affine, copy=False)  # need to ensure Quantity
 
         differentials = dict()
         for k, dif in self.data.differentials.items():
@@ -753,10 +724,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
             otherwise it should be a `dict` keyed by the same keys as the
             differentials.
         """
-        rep = self.data.represent_as(
-            other_class,
-            differential_class=differential_class,
-        )
+        rep = self.data.represent_as(other_class, differential_class=differential_class)
 
         # don't pass on the derivative_type
         # can't do self._class_ since InterpolatedCartesianRepresentation
@@ -820,9 +788,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
             return ideriv
 
         ideriv = super().derivative(n=n)
-
-        # cache in derivatives
-        self._derivatives[f"affine {n}"] = ideriv
+        self._derivatives[f"affine {n}"] = ideriv  # cache in derivatives
 
         return ideriv
 
@@ -933,13 +899,10 @@ class InterpolatedCartesianRepresentation(InterpolatedRepresentation):
                        [ 1.23205081, 1.59807621],
                        [ 3.        , 4.        ]] pc>
         """
-        newrep = self.data.transform(matrix)
-
-        return self._realize_class(newrep, self.affine)
+        return self._realize_class(self.data.transform(matrix), self.affine)
 
     def _scale_operation(self: ICRType, op: T.Callable, *args: T.Any) -> ICRType:  # type: ignore
-        rep = self.data._scale_operation(op, *args)
-        return self._realize_class(rep, self.affine)
+        return self._realize_class(self.data._scale_operation(op, *args), self.affine)
 
 
 # ===================================================================
@@ -949,12 +912,8 @@ class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):
     def __new__(
         cls: T.Type[IDType], rep: T.Union[IDType, DType], *args: T.Any, **kwargs: T.Any
     ) -> IDType:
-        if not isinstance(rep, InterpolatedDifferential) and not isinstance(
-            rep,
-            r.BaseDifferential,
-        ):
+        if not isinstance(rep, (InterpolatedDifferential, r.BaseDifferential)):
             raise TypeError("`rep` must be a differential type.")
-
         return super().__new__(cls, rep, *args, **kwargs)
 
     # ---------------------------------------------------------------
@@ -982,7 +941,6 @@ class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):
         # evaluate the spline on each argument of the position
         affine = u.Quantity(affine, copy=False)  # need to ensure Quantity
         params = {n: interp(affine) for n, interp in self._interps.items()}
-
         data = self.data.__class__(**params)
         return data
 
