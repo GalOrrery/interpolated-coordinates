@@ -888,11 +888,12 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
     >>> x = np.arange(10) * u.m
     >>> s = UnivariateSplinewithUnits(x, x, s=0)
     >>> s.get_knots()
-    array([0., 2., 3., 4., 5., 6., 7., 9.])
+    <Quantity [0., 2., 3., 4., 5., 6., 7., 9.] m>
+
     >>> knt = s.get_knots()
     >>> s1 = LSQUnivariateSplinewithUnits(x, x, knt[1:-1])  # Chop 1st and last knot
     >>> s1.get_knots()
-    array([0., 2., 3., 4., 5., 6., 7., 9.])
+    <Quantity [0., 2., 3., 4., 5., 6., 7., 9.] m>
     """
 
     def __init__(
