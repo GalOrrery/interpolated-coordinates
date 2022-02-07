@@ -203,10 +203,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         **interp_kwargs: T.Any,
     ) -> None:
         # Check it's instantiated and right class
-        if inspect.isclass(rep) and issubclass(
-            rep,
-            r.BaseRepresentationOrDifferential,
-        ):
+        if inspect.isclass(rep) and issubclass(rep, r.BaseRepresentationOrDifferential):
             raise ValueError("Must instantiate `rep`.")
         elif not isinstance(rep, r.BaseRepresentationOrDifferential):
             raise TypeError("`rep` must be a `BaseRepresentationOrDifferential`.")
@@ -229,48 +226,50 @@ class InterpolatedBaseRepresentationOrDifferential:
         self._derivative_type = derivative_type
         self._derivatives: T.Dict[str, T.Any] = dict()
 
-        # -----------------------
-        # Construct interpolation
+        self._init_interps(rep, affine, interps, interp_kwargs)  # Construct interpolation
 
+    def _init_interps(self, rep, affine, interps, interp_kwargs):
         self._interp_kwargs = interp_kwargs.copy()  # TODO need copy?
 
         if interps is not None:
             self._interps = interps
-        else:
-            # determine interpolation type
-            interp_cls = interp_kwargs.pop("interp_cls", IUSU)
+            return
+        # else:
 
-            self._interps = dict()
-            # positional information
-            for comp in rep.components:
-                self._interps[comp] = interp_cls(affine, getattr(rep, comp), **interp_kwargs)
+        self._interps = dict()
 
-            # differentials information
-            # these are stored in a dictionary with keys wrt time
-            # ex : rep.differentials["s"] is a Velocity
-            if hasattr(rep, "differentials"):
-                for k, differential in rep.differentials.items():
-                    d_derivative_type: T.Optional[type]
+        # determine interpolation type
+        interp_cls = interp_kwargs.pop("interp_cls", IUSU)
 
-                    # Is this already an InterpolatedDifferential?
-                    # then need to pop back to the Differential
-                    if isinstance(differential, InterpolatedDifferential):
-                        d_derivative_type = differential.derivative_type
-                        differential = differential.data
-                    else:
-                        d_derivative_type = None
+        # Positional information
+        for comp in rep.components:
+            self._interps[comp] = interp_cls(affine, getattr(rep, comp), **interp_kwargs)
 
-                    # interpolate differential
-                    dif = InterpolatedDifferential(
-                        differential,
-                        affine,
-                        interp_cls=interp_cls,
-                        derivative_type=d_derivative_type,
-                        **interp_kwargs,
-                    )
+        # differentials information
+        # these are stored in a dictionary with keys wrt time
+        # ex : rep.differentials["s"] is a Velocity
+        for k, differential in getattr(rep, "differentials", {}).items():
+            d_derivative_type: T.Optional[type]
 
-                    # store in place of original
-                    self.data.differentials[k] = dif
+            # Is this already an InterpolatedDifferential?
+            # then need to pop back to the Differential
+            if isinstance(differential, InterpolatedDifferential):
+                d_derivative_type = differential.derivative_type
+                differential = differential.data
+            else:
+                d_derivative_type = None
+
+            # interpolate differential
+            dif = InterpolatedDifferential(
+                differential,
+                affine,
+                interp_cls=interp_cls,
+                derivative_type=d_derivative_type,
+                **interp_kwargs,
+            )
+
+            # store in place of original
+            self.data.differentials[k] = dif
 
     @property
     def affine(self) -> u.Quantity:  # read-only
