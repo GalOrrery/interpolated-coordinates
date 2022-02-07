@@ -19,6 +19,6 @@ Code Quality
 	:target: https://www.codacy.com/manual/GalOrrery/interpolated-coordinates
 	:alt: Codacy Code Quality
 
-.. |Codacy Maintainability| image:: https://api.codeclimate.com/v1/badges/102775da549e5999e4fc/maintainability
+.. |Codacy Maintainability| image:: https://api.codeclimate.com/v1/badges/e79ef417052d700b071d/maintainability
    :target: https://codeclimate.com/github/GalOrrery/interpolated-coordinates/maintainability
    :alt: Maintainability
