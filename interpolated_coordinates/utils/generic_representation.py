@@ -216,10 +216,9 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
         ----------
         dif_cls : |Differential| or `GenericDifferential` class
             Differential class for which to make generic.
-
         n : int
             The differential level.
-            Not used if `dif_cls` is GenericDifferential
+            Not used if `dif_cls` is `GenericDifferential`
 
         Returns
         -------
@@ -230,8 +229,6 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
         """
         # 1) check if it's already generic
         if issubclass(dif_cls, GenericDifferential):
-            # if str(n) not in dif_cls.__name__:
-            #     raise ValueError(f"n={n} is not compatible with {dif_cls.__qualname__}")
             return dif_cls
 
         # 2) check if `n` is too small to make a differential
@@ -264,7 +261,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
             # attributes: copies `attr_classes`
             attrs_meths = dict(attr_classes=dif_cls.attr_classes, base_representation=generic_base)
 
-            # make generic differential
+            # Make generic differential
             cls = T.cast(GenericDifferential, type(name, bases, attrs_meths))
 
             # cache, either by class or by name
