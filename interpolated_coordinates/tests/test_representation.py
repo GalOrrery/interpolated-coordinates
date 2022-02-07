@@ -333,7 +333,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         # -----------
         # fails
 
-        with pytest.raises(ValueError, match="Can only add"):
+        with pytest.raises(ValueError, match="can only add"):
             irep.__add__(irep[::2])
 
         # -----------
@@ -346,7 +346,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         # -----------
         # fails
 
-        with pytest.raises(ValueError, match="Can only subtract"):
+        with pytest.raises(ValueError, match="can only subtract"):
             irep.__sub__(irep[::2])
 
         # -----------
@@ -359,7 +359,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         # -----------
         # fails
 
-        with pytest.raises(ValueError, match="Can only multiply"):
+        with pytest.raises(ValueError, match="can only multiply"):
             irep.__mul__(irep[::2])
 
         # -----------
@@ -372,7 +372,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         # -----------
         # fails
 
-        with pytest.raises(ValueError, match="Can only divide"):
+        with pytest.raises(ValueError, match="can only divide"):
             irep.__truediv__(irep[::2])
 
         # -----------
