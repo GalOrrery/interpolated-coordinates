@@ -338,7 +338,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         n : int, optional
             Order of derivative to evaluate. Default: 1
         """
-        # evaluate the spline on each argument of the position
+        # Evaluate the spline on each argument of the position
         params = {
             (k if k.startswith("d_") else "d_" + k): interp.derivative(n=n)(self.affine)
             for k, interp in self._interps.items()
@@ -349,50 +349,42 @@ class InterpolatedBaseRepresentationOrDifferential:
         else:
             deriv_cls = _infer_derivative_type(self.data, self.affine.unit, n=n)
 
-        # make Differential
+        # Make Differential
         deriv = deriv_cls(**params)
 
-        # interpolate
+        # Interpolate
         ideriv = InterpolatedDifferential(deriv, self.affine, **self._interp_kwargs)
         # TODO! rare case when differentiating an integral of a Representation
         # then want to return an interpolated Representation!
 
         return ideriv
 
-    #     def antiderivative(self, n: int = 1) -> T.Any:
-    #         r"""Construct a new spline representing the integral of this spline.
+    # def antiderivative(self, n: int = 1) -> T.Any:
+    #     r"""Construct a new spline representing the integral of this spline.
     #
-    #         .. todo::
-    #
-    #             Allow for attaching the differentials?
-    #
-    #             a differential should become a position!
-    #
-    #         Parameters
-    #         ----------
-    #         n : int, optional
-    #             Order of derivative to evaluate. Default: 1
-    #         """
-    #         # evaluate the spline on each argument of the position
-    #         params = {
-    #             k.lstrip("d_"): interp.antiderivative(n=n)(self.affine)
-    #             for k, interp in self._interps.items()
-    #         }
-    #         # deriv = GenericDifferential(*params)
-    #         # return self._class_(deriv, self.affine, **self._interp_kwargs)
-    #         return params
+    #     Parameters
+    #     ----------
+    #     n : int, optional
+    #         Order of derivative to evaluate. Default: 1
+    #     """
+    #     # evaluate the spline on each argument of the position
+    #     params = {
+    #         k.lstrip("d_"): interp.antiderivative(n=n)(self.affine)
+    #         for k, interp in self._interps.items()
+    #     }
+    #     # deriv = GenericDifferential(*params)
+    #     # return self._class_(deriv, self.affine, **self._interp_kwargs)
+    #     return params
 
     # def integral(self, a, b):
     #     """Return definite integral between two given points."""
     #     raise NotImplementedError("What does this even mean?")
 
-    # # /def
-
     #################################################################
     # Mapping to Underlying Representation
 
     # ---------------------------------------------------------------
-    # hidden methods
+    # Hidden methods
 
     @property
     def __class__(self) -> T.Type[r.BaseRepresentationOrDifferential]:
@@ -463,7 +455,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         return inst
 
     # ---------------------------------------------------------------
-    # math methods
+    # Math Methods
 
     def __add__(
         self: IRoDType,
@@ -482,11 +474,9 @@ class InterpolatedBaseRepresentationOrDifferential:
                     f"Can only add two {self._class_}"
                     + " if the interpolation variables are the same.",
                 )
-
-        # add
+        # Add
         newrep = self.data.__add__(other)
-
-        # now re-interpolate
+        # Add re-interpolate
         return self._realize_class(newrep, self.affine)
 
     def __sub__(
@@ -506,11 +496,9 @@ class InterpolatedBaseRepresentationOrDifferential:
                     f"Can only subtract two {self._class_}"
                     + " if the interpolation variables are the same.",
                 )
-
-        # add
+        # Subtract
         newrep = self.data.__sub__(other)
-
-        # now re-interpolate
+        # And re-interpolate
         return self._realize_class(newrep, self.affine)
 
     def __mul__(
@@ -530,11 +518,9 @@ class InterpolatedBaseRepresentationOrDifferential:
                     f"Can only multiply two {self._class_}"
                     + " if the interpolation variables are the same.",
                 )
-
-        # add
+        # Multiply
         newrep = self.data.__mul__(other)
-
-        # now re-interpolate
+        # And re-interpolate
         return self._realize_class(newrep, self.affine)
 
     def __truediv__(
@@ -561,44 +547,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         # now re-interpolate
         return self._realize_class(newrep, self.affine)
 
-    # def _apply(self, method, *args, **kwargs):
-    #     """Create a new representation or differential with ``method`` applied
-    #     to the component data and the interpolation parameter.
-
-    #     In typical usage, the method is any of the shape-changing methods for
-    #     `~numpy.ndarray` (``reshape``, ``swapaxes``, etc.), as well as those
-    #     picking particular elements (``__getitem__``, ``take``, etc.), which
-    #     are all defined in `~astropy.utils.shapes.ShapedLikeNDArray`. It will be
-    #     applied to the underlying arrays (e.g., ``x``, ``y``, and ``z`` for
-    #     `~astropy.coordinates.CartesianRepresentation`), with the results used
-    #     to create a new instance.
-
-    #     Internally, it is also used to apply functions to the components
-    #     (in particular, `~numpy.broadcast_to`).
-
-    #     Parameters
-    #     ----------
-    #     method : str or callable
-    #         If str, it is the name of a method that is applied to the internal
-    #         ``components``. If callable, the function is applied.
-    #     args : tuple
-    #         Any positional arguments for ``method``.
-    #     kwargs : dict
-    #         Any keyword arguments for ``method``.
-
-    #     """
-    #     rep = self.data._apply(method, *args, **kwargs)
-
-    #     if callable(method):
-    #         apply_method = affine array: method(array, *args, **kwargs)
-    #     else:
-    #         apply_method = operator.methodcaller(method, *args, **kwargs)
-
-    #     affine = apply_method(self.affine)
-
-    #     return InterpolatedRepresentation(rep, affine)
-
-    # # /def
+    # def _apply(self, method, *args, **kwargs):  # TODO!
 
     # ---------------------------------------------------------------
     # Specific wrappers
@@ -733,21 +682,16 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
     interp_cls : Callable (optional, keyword-only)
         option for 'interp_kwargs'.
         If not specified, default is `IUSU`.
-
     """
 
     def __new__(
         cls: T.Type[IRType], representation: r.BaseRepresentation, *args: T.Any, **kwargs: T.Any
     ) -> T.Union[IRType, InterpolatedCartesianRepresentation]:
         self: T.Union[IRType, InterpolatedCartesianRepresentation]
-        # need to special case since it has different methods
+        # Need to special case Cartesian b/c it has different methods
         if isinstance(representation, r.CartesianRepresentation):
-            self = super().__new__(
-                InterpolatedCartesianRepresentation,
-                representation,
-                *args,
-                **kwargs,
-            )
+            ccls = InterpolatedCartesianRepresentation
+            self = super().__new__(ccls, representation, *args, **kwargs)
         else:
             self = super().__new__(cls, representation, *args, **kwargs)
 
@@ -998,13 +942,10 @@ class InterpolatedCartesianRepresentation(InterpolatedRepresentation):
         return self._realize_class(rep, self.affine)
 
 
-# -------------------------------------------------------------------
+# ===================================================================
 
 
 class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):
-
-    # ---------------------------------------------------------------
-
     def __new__(
         cls: T.Type[IDType], rep: T.Union[IDType, DType], *args: T.Any, **kwargs: T.Any
     ) -> IDType:
