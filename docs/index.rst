@@ -19,6 +19,8 @@ or SkyCoord? If yes, this might be a useful package.
 Packages
 ********
 
+|
+
 .. toctree::
    :maxdepth: 1
 
