@@ -8,3 +8,6 @@ checks:
       threshold: 6
   method-count:
     enabled: false
+  complex-logic:
+    config:
+      threshold: 10
