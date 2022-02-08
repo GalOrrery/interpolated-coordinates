@@ -54,6 +54,15 @@ def pytest_configure(config) -> None:
         TESTED_VERSIONS[packagename] = __version__
 
 
+# This has to be in the root dir or it will not display in CI.
+def pytest_report_header(config):
+    # This gets added after the pytest-astropy-header output.
+    return (
+        f'ARCH_ON_CI: {os.environ.get("ARCH_ON_CI", "undefined")}\n'
+        f'IS_CRON: {os.environ.get("IS_CRON", "undefined")}\n'
+    )
+
+
 # ------------------------------------------------------
 
 
