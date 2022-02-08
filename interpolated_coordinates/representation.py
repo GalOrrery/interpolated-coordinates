@@ -228,7 +228,13 @@ class InterpolatedBaseRepresentationOrDifferential:
 
         self._init_interps(rep, affine, interps, interp_kwargs)  # Construct interpolation
 
-    def _init_interps(self, rep, affine, interps, interp_kwargs):
+    def _init_interps(
+        self,
+        rep: r.BaseRepresentationOrDifferential,
+        affine: u.Quantity,
+        interps: T.Optional[T.Dict],
+        interp_kwargs: T.Dict,
+    ) -> None:
         self._interp_kwargs = interp_kwargs.copy()  # TODO need copy?
 
         if interps is not None:

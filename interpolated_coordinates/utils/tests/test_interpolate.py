@@ -127,7 +127,7 @@ class Test_UnivariateSplinewithUnits:
             deriv = spl.derivative(n=2)
 
             assert deriv._xunit == x.unit
-            assert deriv._yunit == y.unit / x.unit ** 2
+            assert deriv._yunit == y.unit / x.unit**2
 
     def test_antiderivative(self, spls, x, y):
         """Test method ``antiderivative``."""
@@ -135,7 +135,7 @@ class Test_UnivariateSplinewithUnits:
             antideriv = spl.antiderivative(n=2)
 
             assert antideriv._xunit == x.unit
-            assert antideriv._yunit == y.unit * x.unit ** 2
+            assert antideriv._yunit == y.unit * x.unit**2
 
 
 # -------------------------------------------------------------------
@@ -165,7 +165,7 @@ class Test_LSQUnivariateSplinewithUnits(Test_UnivariateSplinewithUnits):
 
     @pytest.fixture
     def y(self, num, x):
-        return (np.exp(-(x.value ** 2)) + 0.1) * u.m
+        return (np.exp(-(x.value**2)) + 0.1) * u.m
 
     @pytest.fixture
     def extra_args(self):

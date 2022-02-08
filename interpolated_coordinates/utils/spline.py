@@ -318,12 +318,12 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         super().__init__(x, y, w=w, bbox=bbox, k=k, s=s, ext=ext, check_finite=check_finite)
 
     @property
-    def x_unit(self):
+    def x_unit(self) -> u.Unit:
         """|Unit| of the independent data."""
         return self._xunit
 
     @property
-    def y_unit(self):
+    def y_unit(self) -> u.Unit:
         """|Unit| of the dependent data."""
         return self._yunit
 
@@ -520,7 +520,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         x_val: float = x.to_value(self._xunit)
         d_vals: np.ndarray = super().derivatives(x_val)
         return np.array(
-            [d * self._yunit / self._xunit ** i for i, d in enumerate(d_vals)],
+            [d * self._yunit / self._xunit**i for i, d in enumerate(d_vals)],
             dtype=u.Quantity,
         )
 
@@ -572,7 +572,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         # if self.ext is 'const', derivative.ext will be 'zeros'
         ext = 1 if self.ext == 3 else self.ext
         x_unit = self._xunit
-        y_unit = self._yunit / self._xunit ** n
+        y_unit = self._yunit / self._xunit**n
         return self.__class__._from_tck(tck, x_unit=x_unit, y_unit=y_unit, ext=ext)
 
     def antiderivative(self, n: int = 1) -> USwUType:
@@ -621,7 +621,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         """
         tck = fitpack.splantider(self._eval_args, n)
         x_unit = self._xunit
-        y_unit = self._yunit * self._xunit ** n
+        y_unit = self._yunit * self._xunit**n
         return self.__class__._from_tck(tck, x_unit=x_unit, y_unit=y_unit, ext=self.ext)
 
 

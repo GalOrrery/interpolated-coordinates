@@ -709,7 +709,11 @@ class InterpolatedSkyCoord(SkyCoord):
 
     # ---------------------------------------------------------------
 
-    def match_to_catalog_sky(self, catalogcoord, nthneighbor=1):
+    def match_to_catalog_sky(
+        self,
+        catalogcoord: TH.CoordinateType,
+        nthneighbor: int = 1,
+    ) -> T.Tuple[np.ndarray, coord.Angle, u.Quantity]:
         """
         Finds the nearest on-sky matches of this coordinate in a set of
         catalog coordinates.
@@ -758,9 +762,17 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.match_coordinates_sky
         SkyCoord.match_to_catalog_3d
         """
-        return super().match_to_catalog_sky(catalogcoord, nthneighbor=nthneighbor)
+        idx: np.ndarray
+        sep2d: coord.Angle
+        dist3d: u.Quantity
+        idx, sep2d, dist3d = super().match_to_catalog_sky(catalogcoord, nthneighbor=nthneighbor)
+        return idx, sep2d, dist3d
 
-    def match_to_catalog_3d(self, catalogcoord, nthneighbor=1):
+    def match_to_catalog_3d(
+        self,
+        catalogcoord: TH.CoordinateType,
+        nthneighbor: int = 1,
+    ) -> T.Tuple[np.ndarray, coord.Angle, u.Quantity]:
         """
         Finds the nearest 3-dimensional matches of this coordinate to a set
         of catalog coordinates.
@@ -811,9 +823,17 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.match_coordinates_3d
         SkyCoord.match_to_catalog_sky
         """
-        return super().match_to_catalog_3d(catalogcoord, nthneighbor=nthneighbor)
+        idx: np.ndarray
+        sep2d: coord.Angle
+        dist3d: u.Quantity
+        idx, sep2d, dist3d = super().match_to_catalog_3d(catalogcoord, nthneighbor=nthneighbor)
+        return idx, sep2d, dist3d
 
-    def search_around_sky(self, searcharoundcoords, seplimit):
+    def search_around_sky(
+        self,
+        searcharoundcoords: TH.CoordinateType,
+        seplimit: u.Quantity,
+    ) -> T.Tuple[np.ndarray, np.ndarray, coord.Angle, u.Quantity]:
         """
         Searches for all coordinates in this object around a supplied set of
         points within a given on-sky separation.
@@ -867,9 +887,18 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.search_around_sky
         SkyCoord.search_around_3d
         """
-        return super().search_around_sky(searcharoundcoords, seplimit)
+        idxsearch: np.ndarray
+        idxself: np.ndarray
+        sep2d: coord.Angle
+        dist3d: u.Quantity
+        idxsearch, idxself, sep2d, dist3d = super().search_around_sky(searcharoundcoords, seplimit)
+        return idxsearch, idxself, sep2d, dist3d
 
-    def search_around_3d(self, searcharoundcoords, distlimit):
+    def search_around_3d(
+        self,
+        searcharoundcoords: TH.CoordinateType,
+        distlimit: u.Quantity,
+    ) -> T.Tuple[np.ndarray, np.ndarray, coord.Angle, u.Quantity]:
         """
         Searches for all coordinates in this object around a supplied set of
         points within a given 3D radius.
@@ -923,4 +952,9 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.search_around_3d
         SkyCoord.search_around_sky
         """
-        return super().search_around_3d(searcharoundcoords, distlimit)
+        idxsearch: np.ndarray
+        idxself: np.ndarray
+        sep2d: coord.Angle
+        dist3d: u.Quantity
+        idxsearch, idxself, sep2d, dist3d = super().search_around_3d(searcharoundcoords, distlimit)
+        return idxsearch, idxself, sep2d, dist3d
