@@ -628,7 +628,10 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 # -------------------------------------------------------------------
 
 
-class InterpolatedUnivariateSplinewithUnits(UnivariateSplinewithUnits):
+class InterpolatedUnivariateSplinewithUnits(
+    UnivariateSplinewithUnits,
+    _interp.InterpolatedUnivariateSpline,
+):
     """1-D interpolating spline for a given set of data points, with units.
 
     Fits a spline y = spl(x) of degree `k` to the provided `x`, `y` data.
@@ -762,7 +765,7 @@ class InterpolatedUnivariateSplinewithUnits(UnivariateSplinewithUnits):
 # -------------------------------------------------------------------
 
 
-class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits):
+class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits, _interp.LSQUnivariateSpline):
     """1-D spline with explicit internal knots.
 
     Fits a spline y = spl(x) of degree `k` to the provided `x`, `y` data.  `t`
