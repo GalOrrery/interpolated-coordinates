@@ -7,11 +7,14 @@ on:
     # run at 6am UTC on Mondays
     - cron: '0 6 * * 1'
   pull_request:
-  # We also want this workflow triggered if the 'Extra CI' label is added
-  # or present when PR is updated
-  types:
-    - synchronize
-    - labeled
+    # We also want this workflow triggered if the 'Extra CI' label is added
+    # or present when PR is updated
+    types:
+      - synchronize
+      - labeled
+
+env:
+  IS_CRON: 'true'
 
 jobs:
   tests:
