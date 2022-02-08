@@ -105,5 +105,5 @@ Project details
 .. |Last Commit| image:: https://img.shields.io/github/last-commit/GalOrrery/interpolated-coordinates/master?style=flat
    :alt: GitHub last commit (branch)
 
-.. |Codecov| image:: https://codecov.io/gh/GalOrrery/interpolated-coordinates/branch/master/graph/badge.svg?token=LXhzIKtrVo
+.. |Codecov| image:: https://codecov.io/gh/GalOrrery/interpolated-coordinates/branch/main/graph/badge.svg?token=LXhzIKtrVo
   :target: https://codecov.io/gh/GalOrrery/interpolated-coordinates
