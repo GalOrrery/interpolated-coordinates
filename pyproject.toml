@@ -33,7 +33,6 @@ build-backend = 'setuptools.build_meta'
 
 [project.optional-dependencies]
 test = [
-  "coverage[toml]",
   "matplotlib",
   "pytest",
   "pytest-astropy",
@@ -73,42 +72,6 @@ exclude = '''
   | dist
 )/
 '''
-
-[tool.coverage]
-[tool.coverage.run]
-omit = [
-    "interpolated_coordinates/_astropy_init*",
-    "interpolated_coordinates/conftest.py",
-    "interpolated_coordinates/*setup_package*",
-    "interpolated_coordinates/tests/*",
-    "interpolated_coordinates/*/tests/*",
-    "interpolated_coordinates/extern/*",
-    "interpolated_coordinates/version*",
-    "*/interpolated_coordinates/_astropy_init*",
-    "*/interpolated_coordinates/conftest.py",
-    "*/interpolated_coordinates/*setup_package*",
-    "*/interpolated_coordinates/tests/*",
-    "*/interpolated_coordinates/*/tests/*",
-    "*/interpolated_coordinates/extern/*",
-    "*/interpolated_coordinates/version*"
-]
-
-[tool.coverage.report]
-exclude_lines = [
-    # Have to re-enable the standard pragma
-    "pragma: no cover",
-    # Don't complain about packages we have installed
-    "except ImportError",
-    # Don't complain if tests don't hit assertions
-    "raise AssertionError",
-    "raise NotImplementedError",
-    # Don't complain about script hooks
-    'def main\(.*\):',
-    # Ignore branches that don't pertain to this version of Python
-    "pragma: py{ignore_python_version}",
-    # Don't complain about IPython completion helper
-    "def _ipython_key_completions_"
-]
 
 [tool.isort]
 line_length = 100
