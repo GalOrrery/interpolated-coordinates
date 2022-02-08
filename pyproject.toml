@@ -96,7 +96,10 @@ warn_return_any = true
 warn_redundant_casts = true
 warn_unused_configs = true
 warn_unreachable = true
-exclude = '''(^|/)tests/'''
+exclude = '''(?x)(
+    (^|/)tests/
+    |conftest\.py$
+)'''
 
 [tool.pytest.ini_options]
 testpaths = [
