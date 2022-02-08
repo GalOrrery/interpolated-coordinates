@@ -10,3 +10,4 @@ Reference/API
 =============
 
 .. automodapi:: interpolated_coordinates
+   :no-main-docstr:
