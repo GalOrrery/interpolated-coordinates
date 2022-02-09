@@ -24,6 +24,7 @@ from interpolated_coordinates.frame import (
     InterpolatedRepresentation,
     InterpolatedSkyCoord,
 )
+from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
 
 ##############################################################################
 # TESTS
@@ -41,7 +42,10 @@ class Test_InterpolatedCoordinateFrame(InterpolatedCoordinatesBase):
     def frame(self):
         return coord.Galactocentric
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
+    def crd(self, rep, frame):
+        return frame(rep)
+
     @pytest.fixture(scope="class")
     def icrd_cls(self):
         return InterpolatedCoordinateFrame
@@ -195,11 +199,14 @@ class Test_InterpolatedCoordinateFrame(InterpolatedCoordinatesBase):
         """Test method ``__class__``.
 
         Just passes to the CoordinateFrame.
-
         """
         assert icrd.__class__ is icrd.frame.__class__
         assert issubclass(icrd.__class__, coord.BaseCoordinateFrame)
         assert isinstance(icrd, icrd_cls)
+
+        # Cannot set the class
+        with pytest.raises(TypeError):
+            icrd.__class__ = coord.BaseCoordinateFrame
 
     def test___getattr__(self, icrd, num) -> None:
         """Test method ``__getattr__``.
@@ -288,6 +295,32 @@ class Test_InterpolatedCoordinateFrame(InterpolatedCoordinatesBase):
 
         # TODO more tests
 
+    def test_separation(self, icrd, crd, affine):
+        """Test method ``separation``."""
+        assert all(crd.separation(crd) == 0)  # null hypothesis
+
+        # Interpolated coordinate separation is similar
+        assert np.allclose(icrd.separation(crd, interpolate=False), 0)
+        assert np.allclose(crd.separation(icrd), 0)
+
+        # Can also return an interpolation
+        separation = icrd.separation(crd, interpolate=True)
+        assert isinstance(separation, InterpolatedUnivariateSplinewithUnits)
+        assert np.allclose(separation(affine), 0)
+
+    def test_separation_3d(self, icrd, crd, affine):
+        """Test method ``separation_3d``."""
+        assert all(crd.separation_3d(crd) == 0)  # null hypothesis
+
+        # Interpolated coordinate separation is similar
+        assert np.allclose(icrd.separation_3d(crd, interpolate=False), 0)
+        assert np.allclose(crd.separation_3d(icrd), 0)
+
+        # Can also return an interpolation
+        separation_3d = icrd.separation_3d(crd, interpolate=True)
+        assert isinstance(separation_3d, InterpolatedUnivariateSplinewithUnits)
+        assert np.allclose(separation_3d(affine), 0)
+
 
 #####################################################################
 
@@ -303,7 +336,10 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
     def frame(self):
         return coord.Galactocentric
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
+    def crd(self, frame, rep):
+        return frame(rep)
+
     @pytest.fixture(scope="class")
     def icrd_cls(self):
         return InterpolatedCoordinateFrame
@@ -475,13 +511,31 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
 
             assert all(inst.affine == affine)
 
-    def test_separation(self) -> None:
+    def test_separation(self, icrd, crd, affine):
         """Test method ``separation``."""
-        pass  # it just calls super b/c docstring issues
-
-    def test_separation_3d(self) -> None:
+        assert all(crd.separation(crd) == 0)  # null hypothesis
+    
+        # Interpolated coordinate separation is similar
+        assert np.allclose(icrd.separation(crd, interpolate=False), 0)
+        assert np.allclose(crd.separation(icrd), 0)
+    
+        # Can also return an interpolation
+        separation = icrd.separation(crd, interpolate=True)
+        assert isinstance(separation, InterpolatedUnivariateSplinewithUnits)
+        assert np.allclose(separation(affine), 0)
+    
+    def test_separation_3d(self, icrd, crd, affine):
         """Test method ``separation_3d``."""
-        pass  # it just calls super b/c docstring issues
+        assert all(crd.separation_3d(crd) == 0)  # null hypothesis
+    
+        # Interpolated coordinate separation is similar
+        assert np.allclose(icrd.separation_3d(crd, interpolate=False), 0)
+        assert np.allclose(crd.separation_3d(icrd), 0)
+    
+        # Can also return an interpolation
+        separation_3d = icrd.separation_3d(crd, interpolate=True)
+        assert isinstance(separation_3d, InterpolatedUnivariateSplinewithUnits)
+        assert np.allclose(separation_3d(affine), 0)
 
     def test_match_to_catalog_sky(self) -> None:
         """Test method ``match_to_catalog_sky``."""
