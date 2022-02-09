@@ -24,6 +24,23 @@ from interpolated_coordinates.utils import generic_representation as gr
 ##############################################################################
 
 
+def test_getattr():
+    # failed get
+    with pytest.raises(AttributeError):
+        gr.this_is_not_an_attribute
+
+    # get a representation
+    assert issubclass(gr.GenericRadialRepresentation, coord.RadialRepresentation)
+    assert issubclass(gr.GenericRadialRepresentation, gr.GenericRepresentation)
+
+    # get a differential
+    assert issubclass(gr.GenericRadialDifferential, coord.RadialDifferential)
+    assert issubclass(gr.GenericRadialDifferential, gr.GenericDifferential)
+
+    assert issubclass(gr.GenericRadial2ndDifferential, coord.RadialDifferential)
+    assert issubclass(gr.GenericRadial2ndDifferential, gr.GenericDifferential)
+
+
 def test_GENERIC_REGISTRY():
     """Test :obj:`~interpolated_coordinates.utils.generic_representation._GENERIC_REGISTRY`."""
     # Check type
@@ -351,7 +368,3 @@ class TestGenericCylindrical3rdDifferential:
     @pytest.fixture(scope="class")
     def dif(self, dif_cls):
         return dif_cls(d_rho=1, d_phi=2, d_z=3)
-
-
-##############################################################################
-# END

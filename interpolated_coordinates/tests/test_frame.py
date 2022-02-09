@@ -515,7 +515,7 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
 
             assert all(inst.affine == affine)
 
-    def test_separation(self, iscrd, selfcrd, affine):
+    def test_separation(self, iscrd, scrd, affine):
         """Test method ``separation``."""
         assert all(scrd.separation(scrd) == 0)  # null hypothesis
 
