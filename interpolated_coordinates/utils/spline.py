@@ -339,10 +339,8 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         check_finite: float,
     ) -> T.Tuple[np.ndarray, np.ndarray, np.ndarray, T.List[u.Quantity], T.Union[int, str]]:
         # first validate units
-        if isinstance(x, u.Quantity):
-            x = x.to_value(self._xunit)
-        if isinstance(y, u.Quantity):
-            y = y.to_value(self._yunit)
+        x = x.to_value(self._xunit) if isinstance(x, u.Quantity) else x
+        y = y.to_value(self._yunit) if isinstance(y, u.Quantity) else y
 
         # then validate with UnivariateSpline method, which works with units!
         out: T.Tuple[np.ndarray, np.ndarray, np.ndarray, T.List[u.Quantity], T.Union[int, str]]
