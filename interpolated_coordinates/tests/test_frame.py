@@ -349,6 +349,10 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
         return icrd_cls(frame(irep))
 
     @pytest.fixture(scope="class")
+    def scrd(self, crd):
+        return coord.SkyCoord(crd)
+
+    @pytest.fixture(scope="class")
     def iscrd_cls(self):
         return InterpolatedSkyCoord
 
@@ -511,29 +515,29 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
 
             assert all(inst.affine == affine)
 
-    def test_separation(self, icrd, crd, affine):
+    def test_separation(self, iscrd, selfcrd, affine):
         """Test method ``separation``."""
-        assert all(crd.separation(crd) == 0)  # null hypothesis
+        assert all(scrd.separation(scrd) == 0)  # null hypothesis
 
         # Interpolated coordinate separation is similar
-        assert np.allclose(icrd.separation(crd, interpolate=False), 0)
-        assert np.allclose(crd.separation(icrd), 0)
+        assert np.allclose(iscrd.separation(scrd, interpolate=False), 0)
+        assert np.allclose(scrd.separation(iscrd), 0)
 
         # Can also return an interpolation
-        separation = icrd.separation(crd, interpolate=True)
+        separation = iscrd.separation(scrd, interpolate=True)
         assert isinstance(separation, InterpolatedUnivariateSplinewithUnits)
         assert np.allclose(separation(affine), 0)
 
-    def test_separation_3d(self, icrd, crd, affine):
+    def test_separation_3d(self, iscrd, scrd, affine):
         """Test method ``separation_3d``."""
-        assert all(crd.separation_3d(crd) == 0)  # null hypothesis
+        assert all(scrd.separation_3d(scrd) == 0)  # null hypothesis
 
         # Interpolated coordinate separation is similar
-        assert np.allclose(icrd.separation_3d(crd, interpolate=False), 0)
-        assert np.allclose(crd.separation_3d(icrd), 0)
+        assert np.allclose(iscrd.separation_3d(scrd, interpolate=False), 0)
+        assert np.allclose(scrd.separation_3d(iscrd), 0)
 
         # Can also return an interpolation
-        separation_3d = icrd.separation_3d(crd, interpolate=True)
+        separation_3d = iscrd.separation_3d(scrd, interpolate=True)
         assert isinstance(separation_3d, InterpolatedUnivariateSplinewithUnits)
         assert np.allclose(separation_3d(affine), 0)
 
