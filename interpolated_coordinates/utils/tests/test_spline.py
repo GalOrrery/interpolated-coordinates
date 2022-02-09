@@ -59,9 +59,11 @@ class Test_UnivariateSplinewithUnits:
 
     @pytest.fixture(
         scope="class",
-        params=({"w": None, "bbox": [None, None]},
-                {"w": ..., "bbox": [None, None]},
-                {"w": None, "bbox": ...},)
+        params=(
+            {"w": None, "bbox": [None, None]},
+            {"w": ..., "bbox": [None, None]},
+            {"w": None, "bbox": ...},
+        ),
     )
     def spls(self, request, ispline_cls, x, y, w, bbox, extra_args):
         _w, _bbox = request.param.values()
@@ -178,15 +180,17 @@ class Test_LSQUnivariateSplinewithUnits(Test_UnivariateSplinewithUnits):
 
     @pytest.fixture(
         scope="class",
-        params=({"w": None, "bbox": [None, None]},
-                {"w": ..., "bbox": [None, None]},
-                {"w": None, "bbox": ...},)
+        params=(
+            {"w": None, "bbox": [None, None]},
+            {"w": ..., "bbox": [None, None]},
+            {"w": None, "bbox": ...},
+        ),
     )
     def spls(self, request, ispline_cls, x, y, w, t, bbox, extra_args):
         _w, _bbox = request.param.values()
         w = w if _w is ... else _w
         bbox = bbox if _bbox is ... else _bbox
-    
+
         yield ispline_cls(x, y, t, w=w, bbox=bbox, **extra_args)
 
     # ===============================================================

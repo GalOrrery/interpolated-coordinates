@@ -514,24 +514,24 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
     def test_separation(self, icrd, crd, affine):
         """Test method ``separation``."""
         assert all(crd.separation(crd) == 0)  # null hypothesis
-    
+
         # Interpolated coordinate separation is similar
         assert np.allclose(icrd.separation(crd, interpolate=False), 0)
         assert np.allclose(crd.separation(icrd), 0)
-    
+
         # Can also return an interpolation
         separation = icrd.separation(crd, interpolate=True)
         assert isinstance(separation, InterpolatedUnivariateSplinewithUnits)
         assert np.allclose(separation(affine), 0)
-    
+
     def test_separation_3d(self, icrd, crd, affine):
         """Test method ``separation_3d``."""
         assert all(crd.separation_3d(crd) == 0)  # null hypothesis
-    
+
         # Interpolated coordinate separation is similar
         assert np.allclose(icrd.separation_3d(crd, interpolate=False), 0)
         assert np.allclose(crd.separation_3d(icrd), 0)
-    
+
         # Can also return an interpolation
         separation_3d = icrd.separation_3d(crd, interpolate=True)
         assert isinstance(separation_3d, InterpolatedUnivariateSplinewithUnits)
