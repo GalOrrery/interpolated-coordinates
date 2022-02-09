@@ -767,7 +767,9 @@ class InterpolatedSkyCoord(SkyCoord):
         idx: np.ndarray  # pragma: no cover
         sep2d: coord.Angle  # pragma: no cover
         dist3d: u.Quantity  # pragma: no cover
-        idx, sep2d, dist3d = super().match_to_catalog_sky(catalogcoord, nthneighbor=nthneighbor)  # pragma: no cover
+        idx, sep2d, dist3d = super().match_to_catalog_sky(
+            catalogcoord, nthneighbor=nthneighbor
+        )  # pragma: no cover
         return idx, sep2d, dist3d  # pragma: no cover
 
     def match_to_catalog_3d(
@@ -828,7 +830,9 @@ class InterpolatedSkyCoord(SkyCoord):
         idx: np.ndarray  # pragma: no cover
         sep2d: coord.Angle  # pragma: no cover
         dist3d: u.Quantity  # pragma: no cover
-        idx, sep2d, dist3d = super().match_to_catalog_3d(catalogcoord, nthneighbor=nthneighbor)  # pragma: no cover
+        idx, sep2d, dist3d = super().match_to_catalog_3d(
+            catalogcoord, nthneighbor=nthneighbor
+        )  # pragma: no cover
         return idx, sep2d, dist3d  # pragma: no cover
 
     def search_around_sky(
@@ -893,7 +897,9 @@ class InterpolatedSkyCoord(SkyCoord):
         idxself: np.ndarray  # pragma: no cover
         sep2d: coord.Angle  # pragma: no cover
         dist3d: u.Quantity  # pragma: no cover
-        idxsearch, idxself, sep2d, dist3d = super().search_around_sky(searcharoundcoords, seplimit)  # pragma: no cover
+        idxsearch, idxself, sep2d, dist3d = super().search_around_sky(
+            searcharoundcoords, seplimit
+        )  # pragma: no cover
         return idxsearch, idxself, sep2d, dist3d  # pragma: no cover
 
     def search_around_3d(
@@ -958,5 +964,7 @@ class InterpolatedSkyCoord(SkyCoord):
         idxself: np.ndarray  # pragma: no cover
         sep2d: coord.Angle  # pragma: no cover
         dist3d: u.Quantity  # pragma: no cover
-        idxsearch, idxself, sep2d, dist3d = super().search_around_3d(searcharoundcoords, distlimit)  # pragma: no cover
+        idxsearch, idxself, sep2d, dist3d = super().search_around_3d(
+            searcharoundcoords, distlimit
+        )  # pragma: no cover
         return idxsearch, idxself, sep2d, dist3d  # pragma: no cover
