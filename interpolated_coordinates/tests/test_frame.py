@@ -33,19 +33,20 @@ from interpolated_coordinates.frame import (
 class Test_InterpolatedCoordinateFrame(InterpolatedCoordinatesBase):
     """Test :class:`~{package}.{klass}`."""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep(self, rep, affine):
         return InterpolatedRepresentation(rep, affine=affine)
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def frame(self):
         return coord.Galactocentric
 
     @pytest.fixture
+    @pytest.fixture(scope="class")
     def icrd_cls(self):
         return InterpolatedCoordinateFrame
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def icrd(self, icrd_cls, frame, irep):
         return icrd_cls(frame(irep))
 
@@ -294,27 +295,28 @@ class Test_InterpolatedCoordinateFrame(InterpolatedCoordinatesBase):
 class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
     """Test InterpolatedSkyCoord."""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep(self, rep, affine):
         return InterpolatedRepresentation(rep, affine=affine)
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def frame(self):
         return coord.Galactocentric
 
     @pytest.fixture
+    @pytest.fixture(scope="class")
     def icrd_cls(self):
         return InterpolatedCoordinateFrame
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def icrd(self, icrd_cls, frame, irep):
         return icrd_cls(frame(irep))
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def iscrd_cls(self):
         return InterpolatedSkyCoord
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def iscrd(self, iscrd_cls, icrd):
         return iscrd_cls(icrd)
 

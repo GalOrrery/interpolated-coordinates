@@ -90,19 +90,19 @@ def test_infer_derivative_type():
 
 
 class InterpolatedCoordinatesBase:
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def num(self):
         return 40
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def affine(self, num):
         return np.linspace(0, 10, num=num) * u.Myr
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def dif_cls(self):
         return coord.CartesianDifferential
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def dif(self, num):
         diff = coord.CartesianDifferential(
             d_x=np.linspace(3, 4, num=num) * (u.km / u.s),
@@ -111,11 +111,11 @@ class InterpolatedCoordinatesBase:
         )
         return diff
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def rep_cls(self):
         return coord.CartesianRepresentation
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def rep(self, rep_cls, num, dif):
         rep = rep_cls(
             x=np.linspace(0, 1, num=num) * u.kpc,
@@ -125,7 +125,7 @@ class InterpolatedCoordinatesBase:
         )
         return rep
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def rep_nodif(self, rep):
         return rep.without_differentials()
 
@@ -136,11 +136,11 @@ class InterpolatedCoordinatesBase:
 class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesBase):
     """Test InterpolatedBaseRepresentationOrDifferential."""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep_cls(self):
         return InterpolatedBaseRepresentationOrDifferential
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep(self, irep_cls, rep, affine):
         class SubClass(irep_cls):  # so not abstract & can instantiate
             # TODO! not use Cartesian `rep`, whic is a special case
@@ -289,6 +289,10 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         """
         assert irep.__class__ is irep.data.__class__
 
+        # Cannot set class
+        with pytest.raises(TypeError):
+            irep.__class__ = coord.BaseRepresentationOrDifferential
+
     def test___getattr__(self, irep) -> None:
         """Test method ``__getattr__``."""
         key = "shape"
@@ -425,11 +429,11 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
 class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDifferential):
     """Test InterpolatedRepresentation."""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep_cls(self):
         return InterpolatedRepresentation
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep(self, irep_cls, rep, affine):
         return irep_cls(rep, affine=affine)
 
@@ -648,11 +652,11 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
 class Test_InterpolatedCartesianRepresentation(Test_InterpolatedRepresentation):
     """Test InterpolatedCartesianRepresentation."""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep_cls(self):
         return InterpolatedCartesianRepresentation
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def irep_dimensionless(self, irep_cls):
         return irep_cls(
             coord.CartesianRepresentation(
@@ -700,11 +704,11 @@ class Test_InterpolatedCartesianRepresentation(Test_InterpolatedRepresentation):
 class Test_InterpolatedDifferential(Test_InterpolatedBaseRepresentationOrDifferential):
     """Test InterpolatedDifferential."""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def idif_cls(self):
         return InterpolatedDifferential
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def idif(self, idif_cls, dif, affine):
         return idif_cls(dif, affine=affine)
 
