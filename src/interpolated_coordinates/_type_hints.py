@@ -9,7 +9,6 @@ Note that this is not (necessarily) static typing.
 __all__ = [
     "ArrayLike",
     # coordinates
-    "FrameType",
     "CoordinateType",
     "FrameLikeType",
     # units
@@ -46,10 +45,7 @@ ArrayLike = T.Union[float, np.ndarray]  # np.generic isn't compatible
 
 RepLikeType = T.Union[coord.BaseRepresentation, str]
 
-FrameType = T.TypeVar("FrameType", bound=coord.BaseCoordinateFrame)
-"""|Frame|"""
-
-CoordinateType = T.Union[FrameType, coord.SkyCoord]
+CoordinateType = T.Union[coord.BaseCoordinateFrame, coord.SkyCoord]
 """|Frame| or |SkyCoord|"""
 
 FrameLikeType = T.Union[CoordinateType, str]

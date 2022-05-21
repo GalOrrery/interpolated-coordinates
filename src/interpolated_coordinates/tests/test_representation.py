@@ -422,6 +422,9 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
     # ===============================================================
     # Usage tests
 
+    def test_copying(self, irep) -> None:
+        """Test applying function from :mod:`copy`."""
+        
 
 #####################################################################
 
@@ -437,7 +440,7 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
     def irep(self, irep_cls, rep, affine):
         return irep_cls(rep, affine=affine)
 
-    #######################################################
+    # ===============================================================
     # Method tests
 
     def test_new(self, irep_cls, rep, affine) -> None:
@@ -644,6 +647,9 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
         # and components are the same
         for c in expected.components:
             assert all(getattr(got, c) == getattr(expected, c))
+
+
+    #
 
 
 #####################################################################

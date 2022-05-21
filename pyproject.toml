@@ -1,38 +1,49 @@
 [project]
 name = "interpolated_coordinates"
+version = "0.1.0"
 description = "Univariate Interpolations of Astropy Coordinates"
 readme = "README.rst"
 requires-python = ">=3.8"
-license = {file = "LICENSE.rst"}
+license = {file = "licenses/LICENSE.rst"}
 keywords = ["interpolate", "interpolation", "coordinates", "astronomy"]
 authors = [
     {name = "Nathaniel Starkman"}
 ]
 maintainers = [
-    {name = "nathaniel Starkman"}
+    {name = "Nathaniel Starkman", email = "n.starkman@mail.utoronto.ca"}
 ]
 classifiers = [
-  "Programming Language :: Python"
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Topic :: Scientific/Engineering :: Physics",
 ]
 dependencies = [
-    "astropy",
+    "astropy>=5.0",
     "numpy",
     "scipy",
 ]
-edit_on_github = "False"
-
 
 [build-system]
-requires = ["setuptools",
-            "setuptools_scm",
-            "extension_helpers",
-            "wheel"]
+requires = [
+  "setuptools>=45",
+  "setuptools_scm>=6.2",
+  "extension_helpers",
+  "wheel"
+]
 
 build-backend = 'setuptools.build_meta'
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools_scm]
 
 [project.optional-dependencies]
 test = [
+  "coverage[toml]",
   "matplotlib",
   "pytest",
   "pytest-astropy",
@@ -108,6 +119,37 @@ doctest_plus = "enabled"
 text_file_format = "rst"
 addopts = "--doctest-rst"
 
+[tool.coverage.run]
+omit = [
+  "interpolated_coordinates/_astropy_init*",
+  "interpolated_coordinates/conftest.py",
+  "interpolated_coordinates/*setup_package*",
+  "interpolated_coordinates/tests/*",
+  "interpolated_coordinates/*/tests/*",
+  "interpolated_coordinates/extern/*",
+  "interpolated_coordinates/version*",
+  "*/interpolated_coordinates/_astropy_init*",
+  "*/interpolated_coordinates/conftest.py",
+  "*/interpolated_coordinates/*setup_package*",
+  "*/interpolated_coordinates/tests/*",
+  "*/interpolated_coordinates/*/tests/*",
+  "*/interpolated_coordinates/extern/*",
+  "*/interpolated_coordinates/version*",
+]
 
-[tool.setuptools_scm]
-write_to = "interpolated_coordinates/_version.py"
+[tool.coverage.report]
+exclude_lines = [
+  # Have to re-enable the standard pragma
+  "pragma: no cover",
+  # Don't complain about packages we have installed
+  "except ImportError",
+  # Don't complain if tests don't hit assertions
+  "raise AssertionError",
+  "raise NotImplementedError",
+  # Don't complain about script hooks
+  "'def main(.*):'",
+  # Ignore branches that don't pertain to this version of Python
+  "pragma: py{ignore_python_version}",
+  # Don't complain about IPython completion helper
+  "def _ipython_key_completions_",
+]
