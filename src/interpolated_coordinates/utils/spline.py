@@ -92,15 +92,15 @@ from __future__ import annotations
 
 # STDLIB
 import warnings
-from typing import List, Optional, TypeVar, Union, Tuple, Type
+from typing import List, Optional, Tuple, Type, TypeVar, Union
 
 # THIRD PARTY
 import astropy.units as u
 import numpy as np
 import scipy.interpolate as _interp
-from scipy.interpolate import fitpack
 from astropy.units import Quantity
 from numpy import ndarray
+from scipy.interpolate import fitpack
 
 try:
     # THIRD PARTY

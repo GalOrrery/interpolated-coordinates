@@ -53,7 +53,7 @@ docs = [
   "matplotlib",
   "sphinx-astropy",
   "sphinx",
-  "pytest",
+  "tomlkit",
 ]
 
 [project.urls]
@@ -91,9 +91,9 @@ include_trailing_comma = "True"
 force_grid_wrap = 0
 use_parentheses = "True"
 ensure_newline_before_comments = "True"
-sections = ["FUTURE", "STDLIB", "THIRDPARTY", "LOCALFOLDER"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 known_localfolder = "interpolated_coordinates"
-known_third_party = ["astropy", "matplotlib", "numpy", "pytest", "scipy", "setuptools"]
+known_third_party = ["astropy", "interpolated_coordinates", "matplotlib", "numpy", "pytest", "scipy"]
 import_heading_stdlib = "STDLIB"
 import_heading_thirdparty = "THIRD PARTY"
 import_heading_localfolder = "LOCAL"
@@ -111,7 +111,7 @@ exclude = '''(^|/)tests/'''
 
 [tool.pytest.ini_options]
 testpaths = [
-    "interpolated_coordinates",
+    "src/interpolated_coordinates",
     "docs",
 ]
 astropy_header = "True"
@@ -121,20 +121,12 @@ addopts = "--doctest-rst"
 
 [tool.coverage.run]
 omit = [
-  "interpolated_coordinates/_astropy_init*",
-  "interpolated_coordinates/conftest.py",
-  "interpolated_coordinates/*setup_package*",
-  "interpolated_coordinates/tests/*",
-  "interpolated_coordinates/*/tests/*",
-  "interpolated_coordinates/extern/*",
-  "interpolated_coordinates/version*",
   "*/interpolated_coordinates/_astropy_init*",
   "*/interpolated_coordinates/conftest.py",
   "*/interpolated_coordinates/*setup_package*",
   "*/interpolated_coordinates/tests/*",
   "*/interpolated_coordinates/*/tests/*",
-  "*/interpolated_coordinates/extern/*",
-  "*/interpolated_coordinates/version*",
+  "*/interpolated_coordinates/_version*",
 ]
 
 [tool.coverage.report]

@@ -15,7 +15,7 @@ num = 40
 x = np.linspace(0, 1, num=num) * u.kpc
 rep = coord.CartesianRepresentation(
     x=x,
-    y=8 / (x.value ** 2 + 4) * x.unit,
+    y=8 / (x.value**2 + 4) * x.unit,
     z=np.linspace(2, 3, num=num) * u.kpc,
     differentials=coord.CartesianDifferential(
         d_x=np.linspace(3, 4, num=num) * (u.km / u.s),
