@@ -27,23 +27,26 @@
 
 # STDLIB
 import datetime
-import os
+import pathlib
 import sys
-from configparser import ConfigParser
 from importlib import import_module
 
-try:
-    # THIRD PARTY
-    from sphinx_astropy.conf.v1 import *
-except ImportError:
-    print("ERROR: the documentation requires the sphinx-astropy package to be installed")
-    sys.exit(1)
+# THIRD PARTY
+import tomlkit
+from sphinx_astropy.conf.v1 import *  # noqa: F401, F403
+from sphinx_astropy.conf.v1 import (
+    exclude_patterns,
+    numpydoc_xref_aliases,
+    numpydoc_xref_astropy_aliases,
+    numpydoc_xref_ignore,
+    rst_epilog,
+)
 
-# Get configuration information from setup.cfg
-conf = ConfigParser()
-
-conf.read([os.path.join(os.path.dirname(__file__), "..", "setup.cfg")])
-setup_cfg = dict(conf.items("metadata"))
+# Get configuration information from pyproject.toml
+path = pathlib.Path(__file__).parent.parent / "pyproject.toml"
+with path.open() as f:
+    toml = tomlkit.load(f)
+setup_cfg = toml["project"]
 
 # -- General configuration ----------------------------------------------------
 
@@ -64,7 +67,6 @@ exclude_patterns.append("_templates")
 # This is added to the end of RST files - a good place to put substitutions to
 # be used globally.
 rst_epilog += """
-
 .. |Unit| replace:: :class:`~astropy.units.Unit`
 .. |Quantity| replace:: :class:`~astropy.units.Quantity`
 .. |Quantities| replace:: :class:`~astropy.units.Quantity`
@@ -116,15 +118,15 @@ numpydoc_xref_aliases.update(numpydoc_xref_astropy_aliases)
 
 # This does not *have* to match the package name, but typically does
 project = setup_cfg["name"]
-author = setup_cfg["author"]
-copyright = "{0}, {1}".format(datetime.datetime.now().year, setup_cfg["author"])
+author = ", ".join(d["name"] for d in setup_cfg["authors"])
+copyright = "{0}, {1}".format(datetime.datetime.now().year, author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 
-import_module(setup_cfg["name"])
-package = sys.modules[setup_cfg["name"]]
+import_module(project)
+package = sys.modules[project]
 
 # The short X.Y version.
 version = package.__version__.split("-", 1)[0]
@@ -183,7 +185,7 @@ html_title = f"{project} v{release}"
 htmlhelp_basename = project + "doc"
 
 # Prefixes that are ignored for sorting the Python module index
-modindex_common_prefix = ["interpolated_coordinates."]
+modindex_common_prefix = [f"{project}."]
 
 
 automodsumm_inherited_members = True
@@ -191,14 +193,14 @@ automodsumm_inherited_members = True
 
 # -- Resolving issue number to links in changelog -----------------------------
 
-github_issues_url = "https://github.com/{0}/issues/".format(setup_cfg["github_project"])
+github_issues_url = setup_cfg["urls"]["repository"] + "/issues/"
 
 
 # -- Options for linkcheck output -------------------------------------------
 
 linkcheck_retry = 5
 linkcheck_ignore = [
-    r"https://github\.com/nstarman/interpolated-coordinates/(?:issues|pull)/\d+",
+    setup_cfg["urls"]["repository"] + r"/(?:issues|pull)/\d+",
 ]
 linkcheck_timeout = 180
 linkcheck_anchors = False

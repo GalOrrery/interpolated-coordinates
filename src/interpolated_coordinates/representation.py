@@ -6,7 +6,7 @@ from __future__ import annotations
 import abc
 import copy
 import inspect
-from typing import Any, Callable, Dict, Optional, Sequence, Type, TypeVar, Union
+from typing import Any, Callable, Dict, Optional, Sequence, Tuple, Type, TypeVar, Union
 
 # THIRD PARTY
 import astropy.units as u
@@ -610,11 +610,8 @@ class InterpolatedBaseRepresentationOrDifferential:
         args, kwargs = self.__getnewargs_ex__()
         return self._class_(data, *args[1:], **kwargs)
 
-    def __getnewargs_ex__(self) -> Tuple[Tuple[Any], Dict[str, Any]]:
-        args = (
-            self.data,
-            self.affine
-        )
+    def __getnewargs_ex__(self) -> Tuple[Tuple[Any, ...], Dict[str, Any]]:
+        args = (self.data, self.affine)
         kwargs = {
             "interps": copy.deepcopy(self._interps),
             "derivative_type": self.derivative_type,
@@ -918,9 +915,7 @@ class InterpolatedCartesianRepresentation(InterpolatedRepresentation):
 
 
 class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):
-    def __new__(
-        cls: Type[IDType], rep: Union[IDType, DType], *args: Any, **kwargs: Any
-    ) -> IDType:
+    def __new__(cls: Type[IDType], rep: Union[IDType, DType], *args: Any, **kwargs: Any) -> IDType:
         if not isinstance(rep, (InterpolatedDifferential, BaseDifferential)):
             raise TypeError("`rep` must be a differential type.")
         return super().__new__(cls, rep, *args, **kwargs)

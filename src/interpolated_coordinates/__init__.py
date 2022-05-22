@@ -3,8 +3,9 @@
 
 """Interpolated Coordinates, Representations, and SkyCoords.
 
-Astropy `coordinate <astropy.coordinates.SkyCoord>` objects are collections of points.
-This module provides wrappers to interpolate each dimension of a coordinate object with an affine parameter.
+Astropy `coordinate <astropy.coordinates.SkyCoord>` objects are collections of
+points. This module provides wrappers to interpolate each dimension of a
+coordinate object with an affine parameter.
 
 For all the following examples we assume these imports:
 
@@ -35,20 +36,20 @@ We will start with interpolating Representation object.
      (has differentials w.r.t.: 's')>
 
 Interpolation means we can get the coordinate (representation) at any point
-supported by the affine parameter. For example, the Cartesian coordinate
-at some arbitrary value, say ``affine=4.873 * u.Myr``, is
+supported by the affine parameter. For example, the Cartesian coordinate at some
+arbitrary value, say ``affine=4.873 * u.Myr``, is
 
     >>> irep(4.873 * u.Myr)
     <CartesianRepresentation (x, y, z) in kpc
         (0.4873, 1.4873, 2.4873)
      (has differentials w.r.t.: 's')>
 
-The interpolation can be evaluated on a scalar or any shaped |Quantity|
-array, returning a Representation with the same shape.
+The interpolation can be evaluated on a scalar or any shaped |Quantity| array,
+returning a Representation with the same shape.
 
-This interpolation machinery is built on top of Astropy's Representation
-class and supports all the expected operations, like changing representations,
-while maintaining the interpolation.
+This interpolation machinery is built on top of Astropy's Representation class
+and supports all the expected operations, like changing representations, while
+maintaining the interpolation.
 
     >>> irep.represent_as(coord.SphericalRepresentation)[:4]
     <InterpolatedSphericalRepresentation (affine| lon, lat, distance) in ...
@@ -67,8 +68,8 @@ parameter.
          (0.51282051, 0.1, 0.1, 0.1), (0.76923077, 0.1, 0.1, 0.1)]>
 
 Note that the result is an interpolated Differential class. Higher-order
-derivatives can also be constructed, but they do not have a corresponding
-class in Astropy, so a "Generic" class is constructed.
+derivatives can also be constructed, but they do not have a corresponding class
+in Astropy, so a "Generic" class is constructed.
 
     >>> irep.derivative(n=2)[:4]
     <InterpolatedGenericCartesian2ndDifferential (affine| d_x, d_y, d_z) in ...
@@ -78,13 +79,13 @@ class in Astropy, so a "Generic" class is constructed.
          (0.76923077, -8.65973959e-16,  5.89944760e-15, -5.06594766e-14)]>
 
 Care should be taken not to change representations for these higher-order
-derivatives. The Astropy machinery allows them to be transformed, but
-the transformation is often incorrect.
+derivatives. The Astropy machinery allows them to be transformed, but the
+transformation is often incorrect.
 
 
-Representations are all well and good, but what about coordinate frames?
-The interpolated representations can be used the same as Astropy's, including
-in a |Frame|.
+Representations are all well and good, but what about coordinate frames? The
+interpolated representations can be used the same as Astropy's, including in a
+|Frame|.
 
     >>> frame = coord.ICRS(irep)
     >>> frame[:1]
@@ -93,8 +94,8 @@ in a |Frame|.
      (pm_ra_cosdec, pm_dec, radial_velocity) in (mas / yr, mas / yr, km / s)
         [(-0.28301849, -0.12656972, 6.26099034)]>
 
-The underlying representation is still interpolated, and the interpolation
-is even kept when transforming frames.
+The underlying representation is still interpolated, and the interpolation is
+even kept when transforming frames.
 
     >>> frame = frame.transform_to(coord.Galactic())
     >>> frame.data[:4]
@@ -106,8 +107,8 @@ is even kept when transforming frames.
      (has differentials w.r.t.: 's')>
 
 For deeper integration and access to interpolation methods the
-``InterpolatedCoordinateFrame`` can wrap any ``CoordinateFame``, whether
-or not it contains an interpolated representation.
+``InterpolatedCoordinateFrame`` can wrap any ``CoordinateFame``, whether or not
+it contains an interpolated representation.
 
     >>> iframe = icoord.InterpolatedCoordinateFrame(frame)
     >>> iframe[:4]
@@ -147,11 +148,11 @@ differentiated, etc.
      (pm_ra_cosdec, pm_dec, radial_velocity) in (mas / yr, mas / yr, km / s)
         (-0.13759357, -0.1152677, 7.49365212)>
 
-There are also interpolated |SkyCoord|. This is actually a direct subclass
-of SkyCoord, not a proxy class like the interpolated representations and
-coordinate frame. As such, ``InterpolatedSkyCoord`` can be instantiated in
-all the normal ways, except that it requires the kwarg ``affine``. The only
-exception is if SkyCoord is wrapping an interpolated CoordinateFrame.
+There are also interpolated |SkyCoord|. This is actually a direct subclass of
+SkyCoord, not a proxy class like the interpolated representations and coordinate
+frame. As such, ``InterpolatedSkyCoord`` can be instantiated in all the normal
+ways, except that it requires the kwarg ``affine``. The only exception is if
+SkyCoord is wrapping an interpolated CoordinateFrame.
 
     >>> isc = icoord.InterpolatedSkyCoord(
     ...         [1, 2, 3, 4], [-30, 45, 8, 16],

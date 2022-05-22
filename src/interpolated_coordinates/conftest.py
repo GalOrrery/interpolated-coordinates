@@ -16,7 +16,6 @@ import os
 
 # THIRD PARTY
 import pytest
-from astropy.version import version as astropy_version
 
 try:
     # THIRD PARTY

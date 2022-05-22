@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
+r"""
 Generic versions of the |Representation| in :mod:`astropy`, assuming less about
 the constituent dimensions than their astropy counterparts.
 This can be useful for working with phase-spaces that are not real-space
@@ -14,7 +14,8 @@ them from :mod:`interpolated_coordinates` classes like
 However, one can get and use the classes, with all the above-noted caveats:
 
     >>> import astropy.units as u
-    >>> from interpolated_coordinates.utils.generic_representation import GenericCartesianRepresentation
+    >>> from interpolated_coordinates.utils.generic_representation import \
+    ...     GenericCartesianRepresentation
 
     >>> r = GenericCartesianRepresentation(1, 2, 3)
     >>> r
@@ -27,7 +28,8 @@ The real convenience lies with differentials, which can go to arbitrary order.
 Recalling that many of the methods will give incorrect results, these classes
 are primarily useful for consistent and familiar data storage.
 
-    >>> from interpolated_coordinates.utils.generic_representation import GenericSpherical2ndDifferential
+    >>> from interpolated_coordinates.utils.generic_representation import \
+    ...     GenericSpherical2ndDifferential
 
     >>> d2 = GenericSpherical2ndDifferential(1 * u.rad/u.s**2, 2 * u.rad/u.s**2, 3 * u.km/u.s**2)
     >>> d2
