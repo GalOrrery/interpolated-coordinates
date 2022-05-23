@@ -37,25 +37,25 @@
       "scipy",
   ]
 
-  [[project.optional-dependencies]]
-    test = [
-      "coverage[toml]",
-      "matplotlib",
-      "pytest",
-      "pytest-astropy",
-    ]
-    docs = [
-      "graphviz",
-      "matplotlib",
-      "sphinx-astropy",
-      "sphinx",
-      "tomli",
-    ]
+[project.optional-dependencies]
+  test = [
+    "coverage[toml]",
+    "matplotlib",
+    "pytest",
+    "pytest-astropy",
+  ]
+  docs = [
+    "graphviz",
+    "matplotlib",
+    "sphinx-astropy",
+    "sphinx",
+    "tomli",
+  ]
 
-  [[project.urls]]
-    homepage = "https://github.com/nstarman/interpolated-coordinates"
-    repository = "https://github.com/nstarman/interpolated-coordinates"
-    documentation = "https://github.com/nstarman/interpolated-coordinates"
+[project.urls]
+  homepage = "https://interpolated-coordinates.readthedocs.io/en/latest/"
+  repository = "https://github.com/GalOrrery/interpolated-coordinates"
+  documentation = "https://interpolated-coordinates.readthedocs.io/en/latest/"
 
 
 [tool.setuptools]
