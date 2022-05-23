@@ -32,7 +32,7 @@ import sys
 from importlib import import_module
 
 # THIRD PARTY
-import tomlkit
+import tomli
 from sphinx_astropy.conf.v1 import *  # noqa: F401, F403
 from sphinx_astropy.conf.v1 import (
     exclude_patterns,
@@ -44,8 +44,8 @@ from sphinx_astropy.conf.v1 import (
 
 # Get configuration information from pyproject.toml
 path = pathlib.Path(__file__).parent.parent / "pyproject.toml"
-with path.open() as f:
-    toml = tomlkit.load(f)
+with path.open(mode="rb") as f:
+    toml = tomli.load(f)
 setup_cfg = toml["project"]
 
 # -- General configuration ----------------------------------------------------
@@ -193,14 +193,14 @@ automodsumm_inherited_members = True
 
 # -- Resolving issue number to links in changelog -----------------------------
 
-github_issues_url = setup_cfg["urls"]["repository"] + "/issues/"
+github_issues_url = setup_cfg["urls"][0]["repository"] + "/issues/"
 
 
 # -- Options for linkcheck output -------------------------------------------
 
 linkcheck_retry = 5
 linkcheck_ignore = [
-    setup_cfg["urls"]["repository"] + r"/(?:issues|pull)/\d+",
+    setup_cfg["urls"][0]["repository"] + r"/(?:issues|pull)/\d+",
 ]
 linkcheck_timeout = 180
 linkcheck_anchors = False
