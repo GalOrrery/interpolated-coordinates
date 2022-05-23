@@ -1,152 +1,167 @@
-[project]
-name = "interpolated_coordinates"
-version = "0.1.0"
-description = "Univariate Interpolations of Astropy Coordinates"
-readme = "README.rst"
-requires-python = ">=3.8"
-license = {file = "licenses/LICENSE.rst"}
-keywords = ["interpolate", "interpolation", "coordinates", "astronomy"]
-authors = [
-    {name = "Nathaniel Starkman"}
-]
-maintainers = [
-    {name = "Nathaniel Starkman", email = "n.starkman@mail.utoronto.ca"}
-]
-classifiers = [
-  "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: BSD License",
-  "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3",
-  "Topic :: Scientific/Engineering :: Astronomy",
-  "Topic :: Scientific/Engineering :: Physics",
-]
-dependencies = [
-    "astropy>=5.0",
-    "numpy",
-    "scipy",
-]
-
 [build-system]
-requires = [
-  "setuptools>=45",
-  "setuptools_scm>=6.2",
-  "extension_helpers",
-  "wheel"
-]
+  requires = [
+    "extension_helpers",
+    "oldest-supported-numpy",
+    "setuptools>=45",
+    "setuptools_scm>=6.2",
+    "wheel",
+  ]
 
-build-backend = 'setuptools.build_meta'
+  build-backend = 'setuptools.build_meta'
+
+[project]
+  name = "interpolated_coordinates"
+  version = "0.1.0"
+  description = "Univariate Interpolations of Astropy Coordinates"
+  readme = "README.rst"
+  requires-python = ">=3.8"
+  license = {file = "licenses/LICENSE.rst"}
+  keywords = ["interpolate", "interpolation", "coordinates", "astronomy"]
+  authors = [
+      {name = "Nathaniel Starkman", email = "n.starkman@mail.utoronto.ca"}
+  ]
+  maintainers = [
+      {name = "Nathaniel Starkman", email = "n.starkman@mail.utoronto.ca"}
+  ]
+  classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+  ]
+  dependencies = [
+      "astropy>=5.0",
+      "numpy>=1.18",
+      "scipy",
+  ]
+
+[project.optional-dependencies]
+  test = [
+    "coverage[toml]",
+    "matplotlib",
+    "pytest",
+    "pytest-astropy",
+  ]
+  docs = [
+    "graphviz",
+    "matplotlib",
+    "sphinx-astropy",
+    "sphinx",
+    "tomli",
+  ]
+
+[project.urls]
+  homepage = "https://interpolated-coordinates.readthedocs.io/en/latest/"
+  repository = "https://github.com/GalOrrery/interpolated-coordinates"
+  documentation = "https://interpolated-coordinates.readthedocs.io/en/latest/"
+
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+  package-dir = {"" = "src"}
 
 [tool.setuptools_scm]
 
-[project.optional-dependencies]
-test = [
-  "coverage[toml]",
-  "matplotlib",
-  "pytest",
-  "pytest-astropy",
-]
-docs = [
-  "graphviz",
-  "matplotlib",
-  "sphinx-astropy",
-  "sphinx",
-  "tomlkit",
-]
-
-[project.urls]
-repository = "https://github.com/nstarman/interpolated-coordinates"
-documentation = "https://github.com/nstarman/interpolated-coordinates"
-
 
 [tool.autopep8]
-max_line_length = 100
-in-place = true
-recursive = true
+  max_line_length = 100
+  in-place = true
+  recursive = true
 
 
 [tool.black]
-line-length = 100
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+  line-length = 100
+  include = '\.pyi?$'
+  exclude = '''
+  /(
+      \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  '''
 
 [tool.isort]
-line_length = 100
-multi_line_output = 3
-include_trailing_comma = "True"
-force_grid_wrap = 0
-use_parentheses = "True"
-ensure_newline_before_comments = "True"
-sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-known_localfolder = "interpolated_coordinates"
-known_third_party = ["astropy", "interpolated_coordinates", "matplotlib", "numpy", "pytest", "scipy"]
-import_heading_stdlib = "STDLIB"
-import_heading_thirdparty = "THIRD PARTY"
-import_heading_localfolder = "LOCAL"
+  profile = "black"
+  line_length = 100
+  multi_line_output = 3
+  include_trailing_comma = "True"
+  force_grid_wrap = 0
+  use_parentheses = "True"
+  ensure_newline_before_comments = "True"
+  sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+  known_localfolder = "interpolated_coordinates"
+  known_third_party = ["astropy", "interpolated_coordinates", "matplotlib", "numpy", "pytest", "scipy"]
+  import_heading_stdlib = "STDLIB"
+  import_heading_thirdparty = "THIRD PARTY"
+  import_heading_localfolder = "LOCAL"
 
 
 [tool.mypy]
-disallow_untyped_defs = true
-ignore_missing_imports = true
-no_implicit_optional = true
-warn_return_any = true
-warn_redundant_casts = true
-warn_unused_configs = true
-warn_unreachable = true
-exclude = '''(^|/)tests/'''
+  disallow_untyped_defs = true
+  ignore_missing_imports = true
+  no_implicit_optional = true
+  warn_return_any = true
+  warn_redundant_casts = true
+  warn_unused_configs = true
+  warn_unreachable = true
+  exclude = '''(^|/)tests/'''
 
-[tool.pytest.ini_options]
-testpaths = [
-  "src/interpolated_coordinates",
-  "docs",
-]
-astropy_header = "True"
-doctest_plus = "enabled"
-text_file_format = "rst"
-addopts = "--doctest-rst"
-filterwarnings = [
-  # tomlkit
-  "ignore:The config value `project' has type `String', defaults to `str'.",
-  "ignore:The config value `htmlhelp_basename' has type `String', defaults to `str'.",
-]
+  [[tool.mypy.overrides]]
+    module = "*/tests/*"
+    ignore_errors = true
 
-[tool.coverage.run]
-omit = [
-  "*/interpolated_coordinates/_astropy_init*",
-  "*/interpolated_coordinates/conftest.py",
-  "*/interpolated_coordinates/*setup_package*",
-  "*/interpolated_coordinates/tests/*",
-  "*/interpolated_coordinates/*/tests/*",
-  "*/interpolated_coordinates/_version*",
-]
+  [[tool.mypy.overrides]]
+    module = "docs/*"
+    ignore_errors = true
 
-[tool.coverage.report]
-exclude_lines = [
-  # Have to re-enable the standard pragma
-  "pragma: no cover",
-  # Don't complain about packages we have installed
-  "except ImportError",
-  # Don't complain if tests don't hit assertions
-  "raise AssertionError",
-  "raise NotImplementedError",
-  # Don't complain about script hooks
-  "'def main(.*):'",
-  # Ignore branches that don't pertain to this version of Python
-  "pragma: py{ignore_python_version}",
-  # Don't complain about IPython completion helper
-  "def _ipython_key_completions_",
-]
+
+[tool.pytest]
+
+  [[tool.pytest.ini_options]]
+    testpaths = ["src/interpolated_coordinates", "docs"]
+    astropy_header = "True"
+    doctest_plus = "enabled"
+    text_file_format = "rst"
+    addopts = "--doctest-rst"
+    filterwarnings = [
+      # tomlkit
+      "ignore:The config value `project' has type `String', defaults to `str'.",
+      "ignore:The config value `htmlhelp_basename' has type `String', defaults to `str'.",
+    ]
+
+
+[tool.coverage]
+
+  [[tool.coverage.run]]
+    omit = [
+      "*/interpolated_coordinates/_astropy_init*",
+      "*/interpolated_coordinates/conftest.py",
+      "*/interpolated_coordinates/*setup_package*",
+      "*/interpolated_coordinates/tests/*",
+      "*/interpolated_coordinates/*/tests/*",
+      "*/interpolated_coordinates/_version*",
+    ]
+
+  [[tool.coverage.report]]
+    exclude_lines = [
+      # Have to re-enable the standard pragma
+      "pragma: no cover",
+      # Don't complain about packages we have installed
+      "except ImportError",
+      # Don't complain if tests don't hit assertions
+      "raise AssertionError",
+      "raise NotImplementedError",
+      # Don't complain about script hooks
+      "'def main(.*):'",
+      # Ignore branches that don't pertain to this version of Python
+      "pragma: py{ignore_python_version}",
+      # Don't complain about IPython completion helper
+      "def _ipython_key_completions_",
+    ]
