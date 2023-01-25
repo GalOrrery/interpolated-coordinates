@@ -87,8 +87,8 @@ Project details
 .. |Documentation Status| image:: https://readthedocs.org/projects/interpolated-coordinates/badge/?version=latest
    :target: https://interpolated-coordinates.readthedocs.io/en/latest/?badge=latest
 
-.. |DOI| image:: https://zenodo.org/badge/192425953.svg
-   :target: https://zenodo.org/badge/latestdoi/192425953
+.. |DOI| image:: https://zenodo.org/badge/453202992.svg
+   :target: https://zenodo.org/badge/latestdoi/453202992
 
 .. |License| image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
    :target: https://opensource.org/licenses/BSD-3-Clause
