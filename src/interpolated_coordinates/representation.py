@@ -848,7 +848,6 @@ class InterpolatedCartesianRepresentation(InterpolatedRepresentation):
         derivative_type: Optional[BaseDifferential] = None,
         **interp_kwargs: Any,
     ) -> None:
-
         # Check its instantiated and right class
         if inspect.isclass(rep) and issubclass(
             rep,

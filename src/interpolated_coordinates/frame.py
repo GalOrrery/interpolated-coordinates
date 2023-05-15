@@ -571,7 +571,6 @@ class InterpolatedSkyCoord(SkyCoord):
         copy: bool = True,
         **kwargs: Any,
     ) -> None:
-
         keys = tuple(kwargs.keys())  # needed b/c pop changes size
         interp_kwargs = {k: kwargs.pop(k) for k in keys if k.startswith("interp_")}
 
