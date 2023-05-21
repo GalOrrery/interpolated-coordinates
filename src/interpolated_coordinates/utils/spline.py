@@ -93,7 +93,7 @@ __all__ = [
 ]
 
 import warnings
-from typing import TYPE_CHECKING, List, Optional, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar
 
 import astropy.units as u
 import numpy as np
@@ -114,7 +114,7 @@ if TYPE_CHECKING:
 ##############################################################################
 # PARAMETERS
 
-BBoxType = List[Optional[Quantity]]
+BBoxType = list[Optional[Quantity]]
 USwUType = TypeVar("USwUType", bound="UnivariateSplinewithUnits")
 
 ##############################################################################

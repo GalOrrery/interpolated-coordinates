@@ -3,7 +3,7 @@ name = "interpolated_coordinates"
 version = "0.1.0"
 description = "Univariate Interpolations of Astropy Coordinates"
 readme = "README.rst"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {file = "licenses/LICENSE.rst"}
 keywords = ["interpolate", "interpolation", "coordinates", "astronomy"]
 authors = [

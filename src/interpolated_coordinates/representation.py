@@ -11,7 +11,7 @@ __all__ = [
 
 import abc
 import copy
-from typing import TYPE_CHECKING, Any, Callable, Sequence, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 import astropy.units as u
 import numpy.lib.recfunctions as rfn
@@ -31,6 +31,8 @@ from .utils import GenericDifferential
 from .utils import InterpolatedUnivariateSplinewithUnits as IntpUnivarSplUnits
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from numpy.typing import NDArray
 
     from ._type_hints import UnitLikeType
