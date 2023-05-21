@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
 """Interpolated Coordinates, Representations, and SkyCoords.
@@ -165,13 +164,9 @@ SkyCoord is wrapping an interpolated CoordinateFrame.
 
 """
 
-# Packages may add whatever they like to this file, but
-# should keep this content at the top.
-# ----------------------------------------------------------------------------
-from ._astropy_init import *  # noqa: F401, F403  # isort: split
+from importlib.metadata import version as _get_version
 
-# ----------------------------------------------------------------------------
+from .frame import *  # noqa: F403
+from .representation import *  # noqa: F403
 
-# LOCAL
-from .frame import *  # noqa: F401, F403
-from .representation import *  # noqa: F401, F403
+__version__ = _get_version("interpolated_coordinates")

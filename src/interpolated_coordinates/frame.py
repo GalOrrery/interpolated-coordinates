@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
+"""Interpolated frames."""
 
 from __future__ import annotations
 
-# STDLIB
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+__all__ = ["InterpolatedCoordinateFrame", "InterpolatedSkyCoord"]
 
-# THIRD PARTY
+from typing import TYPE_CHECKING, Any
+
 from astropy.coordinates import (
     Angle,
     BaseCoordinateFrame,
@@ -15,20 +15,20 @@ from astropy.coordinates import (
     Distance,
     SkyCoord,
 )
-from astropy.units import Quantity
 from astropy.utils.decorators import format_doc
-from numpy import ndarray
 
-# LOCAL
-from ._type_hints import CoordinateType, FrameLikeType, RepLikeType
 from .representation import (
     _UNIT_DIF_TYPES,
     InterpolatedBaseRepresentationOrDifferential,
     InterpolatedRepresentation,
 )
-from .utils import InterpolatedUnivariateSplinewithUnits as IUSU
+from .utils import InterpolatedUnivariateSplinewithUnits as IUSUnits
 
-__all__ = ["InterpolatedCoordinateFrame", "InterpolatedSkyCoord"]
+if TYPE_CHECKING:
+    from astropy.units import Quantity
+    from numpy.typing import NDArray
+
+    from ._type_hints import CoordinateType, FrameLikeType, RepLikeType
 
 
 ##############################################################################
@@ -38,10 +38,6 @@ __all__ = ["InterpolatedCoordinateFrame", "InterpolatedSkyCoord"]
 
 class InterpolatedCoordinateFrame:
     """Wrapper for Coordinate Frame, adding affine interpolations.
-
-    .. todo::
-
-        - override all the methods, mapping to underlying CoordinateFrame
 
     Parameters
     ----------
@@ -73,9 +69,9 @@ class InterpolatedCoordinateFrame:
     def __init__(
         self,
         data: CoordinateType,
-        affine: Optional[Quantity] = None,
+        affine: Quantity | None = None,
         *,
-        interps: Optional[Dict] = None,
+        interps: dict | None = None,
         **interp_kwargs: Any,
     ) -> None:
         # get rep from CoordinateType
@@ -85,22 +81,19 @@ class InterpolatedCoordinateFrame:
             pass
         elif isinstance(rep, BaseRepresentation):
             if affine is None:
-                raise ValueError(
-                    "`data` is not already interpolated. "
-                    "Need to pass a Quantity array for `affine`.",
-                )
+                msg = "`data` is not already interpolated. Need to pass a Quantity array for `affine`."  # noqa: E501
+                raise ValueError(msg)
 
             rep = InterpolatedRepresentation(rep, affine=affine, interps=interps, **interp_kwargs)
         else:
-            raise TypeError(
-                "`data` must be type " + "<InterpolatedRepresentation> or <BaseRepresentation>",
-            )
+            msg = ("`data` must be type <InterpolatedRepresentation> or <BaseRepresentation>",)
+            raise TypeError(msg)
 
         self.frame = data.realize_frame(rep)
         self._interp_kwargs = interp_kwargs
 
     @property
-    def _interp_kwargs(self) -> Dict[str, Any]:
+    def _interp_kwargs(self) -> dict[str, Any]:
         ikw: dict = self.data._interp_kwargs
         return ikw
 
@@ -108,7 +101,7 @@ class InterpolatedCoordinateFrame:
     def _interp_kwargs(self, value: dict) -> None:
         self.data._interp_kwargs = value
 
-    def __call__(self, affine: Optional[Quantity] = None) -> BaseRepresentation:
+    def __call__(self, affine: Quantity | None = None) -> BaseRepresentation:
         """Evaluate interpolated coordinate frame.
 
         Parameters
@@ -125,33 +118,39 @@ class InterpolatedCoordinateFrame:
         return self.frame.realize_frame(self.frame.data(affine))
 
     @property
-    def _class_(self) -> Type[InterpolatedCoordinateFrame]:
+    def _class_(self) -> type[InterpolatedCoordinateFrame]:
         return object.__class__(self)
 
     def _realize_class(self, data: CoordinateType) -> InterpolatedCoordinateFrame:
         return self._class_(data, affine=self.affine, **self._interp_kwargs)
 
     def realize_frame(
-        self, data: BaseRepresentation, affine: Optional[Quantity] = None, **kwargs: Any
+        self,
+        data: BaseRepresentation,
+        affine: Quantity | None = None,
+        **kwargs: Any,
     ) -> InterpolatedCoordinateFrame:
-        """Generates a new frame with new data from another frame (which may or
-        may not have data). Roughly speaking, the converse of
-        `replicate_without_data`.
+        """Generates a new frame with new data from another frame.
+
+        The new frame may or may not have data. Roughly speaking, the converse
+        of `replicate_without_data`.
 
         Parameters
         ----------
         data : `~astropy.coordinates.BaseRepresentation`
             The representation to use as the data for the new frame.
-
-        Any additional keywords are treated as frame attributes to be set on
-        the new frame object. In particular, `representation_type` can be
-        specified.
+        affine : `~astropy.units.Quantity` | None, optional
+            The affine interpolation parameter.
+        **kwargs: Any, optional
+            Any additional keywords are treated as frame attributes to be set on
+            the new frame object. In particular, `representation_type` can be
+            specified.
 
         Returns
         -------
         frameobj : same as this frame
-            A new object with the same frame attributes as this one, but
-            with the ``data`` as the coordinate data.
+            A new object with the same frame attributes as this one, but with
+            the ``data`` as the coordinate data.
         """
         frame = self.frame.realize_frame(data, **kwargs)
         return self._class_(frame, affine=affine, **kwargs)
@@ -204,21 +203,17 @@ class InterpolatedCoordinateFrame:
 
     @__class__.setter
     def __class__(self, value: Any) -> None:  # needed for mypy  # noqa: F811
-        raise TypeError("cannot set the `__class__` attribute.")
+        msg = "cannot set the `__class__` attribute."
+        raise TypeError(msg)
 
     def __getattr__(self, key: str) -> Any:
         """Route everything to underlying CoordinateFrame."""
-        try:
-            frame = object.__getattribute__(self, "frame")
-        except AttributeError:
-            raise
-        else:
-            return getattr(frame, key)
+        return getattr(object.__getattribute__(self, "frame"), key)
 
     def __len__(self) -> int:
         return len(self.frame)
 
-    def __getitem__(self, key: Union[int, slice, ndarray]) -> InterpolatedCoordinateFrame:
+    def __getitem__(self, key: int | slice | NDArray) -> InterpolatedCoordinateFrame:
         frame = self.frame[key]
         affine = self.affine[key]
 
@@ -238,8 +233,8 @@ class InterpolatedCoordinateFrame:
     def represent_as(
         self,
         base: RepLikeType,
-        s: Union[str, BaseDifferential] = "base",
-        in_frame_units: bool = False,
+        s: str | BaseDifferential = "base",
+        in_frame_units: bool = False,  # noqa: FBT001, FBT002
     ) -> InterpolatedRepresentation:
         """Generate and return a new representation of this frame's `data`
         as a Representation object.
@@ -294,7 +289,7 @@ class InterpolatedCoordinateFrame:
 
     def transform_to(
         self,
-        new_frame: Union[BaseCoordinateFrame, SkyCoord],
+        new_frame: BaseCoordinateFrame | SkyCoord,
     ) -> InterpolatedCoordinateFrame:
         """Transform this object's coordinate data to a new frame.
 
@@ -332,7 +327,7 @@ class InterpolatedCoordinateFrame:
         s: str = self.frame._frame_attrs_repr()
         return s
 
-    def _data_repr(self) -> str:
+    def _data_repr(self) -> str:  # noqa: C901
         """Returns a string representation of the coordinate data.
 
         This method is modified from the original to include the affine
@@ -344,7 +339,6 @@ class InterpolatedCoordinateFrame:
             string representation of the data
         """
         # if not self.has_data:  # must have data to be interpolated
-        #     return ""
 
         rep_cls = self.representation_type
 
@@ -371,9 +365,9 @@ class InterpolatedCoordinateFrame:
 
             # Generate the list of component names out of the repr string
             part1, _, remainder = data_repr.partition("(")
-            if remainder != "":
+            if remainder:
                 comp_str, _, part2 = remainder.partition(")")
-                comp_names: List[str] = comp_str.split(", ")
+                comp_names: list[str] = comp_str.split(", ")
 
                 affine_name, comp_name_0 = comp_names[0].split("| ")
                 comp_names[0] = comp_name_0
@@ -388,8 +382,6 @@ class InterpolatedCoordinateFrame:
                 data_repr = part1 + "(" + affine_name + "| " + ", ".join(comp_names) + ")" + part2
 
         # else:  # uncomment when encounter
-        #     data = self.frame.data
-        #     data_repr = repr(self.data)
 
         data_cls_name = "Interpolated" + data.__class__.__name__
         if data_repr.startswith("<" + data_cls_name):
@@ -398,7 +390,6 @@ class InterpolatedCoordinateFrame:
             i = len(data_cls_name) + 2
             data_repr = data_repr[i:-1]
         # else:  # uncomment when encounter
-        #     data_repr = "Data:\n" + data_repr
 
         if "s" in self.data.differentials:
             data_repr_spl = data_repr.split("\n")
@@ -427,48 +418,21 @@ class InterpolatedCoordinateFrame:
 
         cls_name = self.__class__.__name__
         if data_repr:
-            return f"<Interpolated{cls_name} " f"Coordinate{frameattrs}: {data_repr}>"
+            return f"<Interpolated{cls_name} Coordinate{frameattrs}: {data_repr}>"
         # else:  # uncomment when encounter
-        #     return f"<Interpolated{cls_name} Frame{frameattrs}>"
 
         return "TODO!"
 
     # -----------------------------------------------------
     # Separation
 
-    # @overload
-    # def separation(self, point: CoordinateType, interpolate: Literal[True]) -> IUSU:
-    #     ...
-
-    # @overload
-    # def separation(
-    #     self, point: CoordinateType, interpolate: Literal[True], affine: Quantity
-    # ) -> IUSU:
-    #     ...
-
-    # @overload
-    # def separation(self, point: CoordinateType, interpolate: Literal[False]) -> Angle:
-    #     ...
-
-    # @overload
-    # def separation(
-    #     self, point: CoordinateType, interpolate: Literal[False], affine: Quantity
-    # ) -> Angle:
-    #     ...
-
-    # @overload
-    # def separation(
-    #     self, point: CoordinateType, interpolate: bool, affine: Optional[Quantity]
-    # ) -> Union[Angle, IUSU]:
-    #     ...
-
     def separation(
         self,
         point: CoordinateType,
         *,
         interpolate: bool = True,
-        affine: Optional[Quantity] = None,
-    ) -> Union[Angle, IUSU]:
+        affine: Quantity | None = None,
+    ) -> Angle | IUSUnits:
         """Computes on-sky separation between this coordinate and another.
 
         .. note::
@@ -481,9 +445,9 @@ class InterpolatedCoordinateFrame:
 
         Parameters
         ----------
-        other : `~astropy.coordinates.BaseCoordinateFrame`
+        point : `~astropy.coordinates.BaseCoordinateFrame`
             The coordinate to get the separation to.
-        interpolated : bool, optional keyword-only
+        interpolate : bool, optional keyword-only
             Whether to return the separation as an interpolation, or as points.
         affine : `~astropy.units.Quantity` array-like or None, optional
             The affine interpolation parameter. If None (default), return
@@ -491,7 +455,7 @@ class InterpolatedCoordinateFrame:
 
         Returns
         -------
-        sep : `~astropy.coordinates.Angle` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`  # noqa: E501
+        sep : `~astropy.coordinates.Angle` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`
             The on-sky separation between this and the ``other`` coordinate.
 
         Notes
@@ -500,7 +464,7 @@ class InterpolatedCoordinateFrame:
         is stable at all locations, including poles and antipodes [1]_.
 
         .. [1] https://en.wikipedia.org/wiki/Great-circle_distance
-        """
+        """  # noqa: E501
         return self._separation(point, angular=True, interpolate=interpolate, affine=affine)
 
     def separation_3d(
@@ -508,20 +472,18 @@ class InterpolatedCoordinateFrame:
         point: CoordinateType,
         *,
         interpolate: bool = True,
-        affine: Optional[Quantity] = None,
-    ) -> Union[Distance, IUSU]:
-        """
-        Computes three dimensional separation between this coordinate
-        and another.
+        affine: Quantity | None = None,
+    ) -> Distance | IUSUnits:
+        """Compute three dimensional separation between coordinates.
 
         For more on how to use this (and related) functionality, see the
         examples in :doc:`astropy:coordinates/matchsep`.
 
         Parameters
         ----------
-        other : `~astropy.coordinates.BaseCoordinateFrame`
+        point : `~astropy.coordinates.BaseCoordinateFrame`
             The coordinate to get the separation to.
-        interpolated : bool, optional keyword-only
+        interpolate : bool, optional keyword-only
             Whether to return the separation as an interpolation, or as points.
         affine : `~astropy.units.Quantity` array-like or None, optional
             The affine interpolation parameter. If None (default), return
@@ -529,23 +491,23 @@ class InterpolatedCoordinateFrame:
 
         Returns
         -------
-        sep : `~astropy.coordinates.Distance` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`  # noqa: E501
+        sep : `~astropy.coordinates.Distance` | `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`
             The real-space distance between these two coordinates.
 
         Raises
         ------
         ValueError
             If this or the other coordinate do not have distances.
-        """
+        """  # noqa: E501
         return self._separation(point, angular=False, interpolate=interpolate, affine=affine)
 
     def _separation(
         self,
         point: SkyCoord,
-        angular: bool,
-        interpolate: bool,
-        affine: Optional[Quantity],
-    ) -> Union[Angle, Distance, IUSU]:
+        angular: bool,  # noqa: FBT001
+        interpolate: bool,  # noqa: FBT001
+        affine: Quantity | None,
+    ) -> Angle | Distance | IUSUnits:
         """Separation helper function."""
         affine = self.affine if affine is None else affine
 
@@ -555,7 +517,7 @@ class InterpolatedCoordinateFrame:
         if not interpolate:
             return seps
 
-        return IUSU(affine, seps)  # TODO! if 1 point
+        return IUSUnits(affine, seps)  # TODO! if 1 point
 
 
 #####################################################################
@@ -567,11 +529,10 @@ class InterpolatedSkyCoord(SkyCoord):
     def __init__(
         self,
         *args: Any,
-        affine: Optional[Quantity] = None,
+        affine: Quantity | None = None,
         copy: bool = True,
         **kwargs: Any,
     ) -> None:
-
         keys = tuple(kwargs.keys())  # needed b/c pop changes size
         interp_kwargs = {k: kwargs.pop(k) for k in keys if k.startswith("interp_")}
 
@@ -580,10 +541,12 @@ class InterpolatedSkyCoord(SkyCoord):
         # change frame to InterpolatedCoordinateFrame
         if not isinstance(self.frame, InterpolatedCoordinateFrame):
             self._sky_coord_frame = InterpolatedCoordinateFrame(
-                self.frame, affine=affine, **interp_kwargs
+                self.frame,
+                affine=affine,
+                **interp_kwargs,
             )
 
-    def __call__(self, affine: Optional[Quantity] = None) -> SkyCoord:
+    def __call__(self, affine: Quantity | None = None) -> SkyCoord:
         """Evaluate interpolated representation.
 
         Parameters
@@ -597,13 +560,12 @@ class InterpolatedSkyCoord(SkyCoord):
         `SkyCoord`
             CoordinateFrame of type ``self.frame`` evaluated with `affine`
         """
-        newsc = SkyCoord(self.frame(affine))
-        return newsc
+        return SkyCoord(self.frame(affine))
 
     def transform_to(
         self,
         frame: FrameLikeType,
-        merge_attributes: bool = True,
+        merge_attributes: bool = True,  # noqa: FBT001, FBT002
     ) -> InterpolatedSkyCoord:
         """Transform this coordinate to a new frame.
 
@@ -655,8 +617,8 @@ class InterpolatedSkyCoord(SkyCoord):
         point: CoordinateType,
         *,
         interpolate: bool = True,
-        affine: Optional[Quantity] = None,
-    ) -> Union[Angle, IUSU]:
+        affine: Quantity | None = None,
+    ) -> Angle | IUSUnits:
         """Computes on-sky separation between this coordinate and another.
 
         .. note::
@@ -672,9 +634,9 @@ class InterpolatedSkyCoord(SkyCoord):
 
         Parameters
         ----------
-        other : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`
+        point : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`
             The coordinate to get the separation to.
-        interpolated : bool, optional keyword-only
+        interpolate : bool, optional keyword-only
             Whether to return the separation as an interpolation, or as points.
         affine : `~astropy.units.Quantity` array-like or None, optional
             The affine interpolation parameter. If None (default), return
@@ -682,7 +644,7 @@ class InterpolatedSkyCoord(SkyCoord):
 
         Returns
         -------
-        sep : ~astropy.coordinates.Angle` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`  # noqa: E501
+        sep : ~astropy.coordinates.Angle` | `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`
             The on-sky separation between this and the ``other`` coordinate.
 
         Notes
@@ -691,7 +653,7 @@ class InterpolatedSkyCoord(SkyCoord):
         is stable at all locations, including poles and antipodes [1]_.
 
         .. [1] https://en.wikipedia.org/wiki/Great-circle_distance
-        """
+        """  # noqa: E501
         return self._separation(point, angular=True, interpolate=interpolate, affine=affine)
 
     def separation_3d(
@@ -699,10 +661,9 @@ class InterpolatedSkyCoord(SkyCoord):
         point: CoordinateType,
         *,
         interpolate: bool = True,
-        affine: Optional[Quantity] = None,
-    ) -> Union[Distance, IUSU]:
-        """
-        Computes three dimensional separation between this coordinate
+        affine: Quantity | None = None,
+    ) -> Distance | IUSUnits:
+        """Computes three dimensional separation between this coordinate
         and another.
 
         For more on how to use this (and related) functionality, see the
@@ -710,9 +671,9 @@ class InterpolatedSkyCoord(SkyCoord):
 
         Parameters
         ----------
-        other : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`
+        point : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`
             The coordinate to get the separation to.
-        interpolated : bool, optional keyword-only
+        interpolate : bool, optional keyword-only
             Whether to return the separation as an interpolation, or as points.
         affine : `~astropy.units.Quantity` array-like or None, optional
             The affine interpolation parameter. If None (default), return
@@ -720,23 +681,23 @@ class InterpolatedSkyCoord(SkyCoord):
 
         Returns
         -------
-        sep : `~astropy.coordinates.Distance` or `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`  # noqa: E501
+        sep : `~astropy.coordinates.Distance` | `~interpolated_coordinates.utils.InterpolatedUnivariateSplinewithUnits`
             The real-space distance between these two coordinates.
 
         Raises
         ------
         ValueError
             If this or the other coordinate do not have distances.
-        """
+        """  # noqa: E501
         return self._separation(point, angular=False, interpolate=interpolate, affine=affine)
 
     def _separation(
         self,
         point: SkyCoord,
-        angular: bool,
-        interpolate: bool,
-        affine: Optional[Quantity],
-    ) -> Union[Angle, Distance, IUSU]:
+        angular: bool,  # noqa: FBT001
+        interpolate: bool,  # noqa: FBT001
+        affine: Quantity | None,
+    ) -> Angle | Distance | IUSUnits:
         """Separation helper function."""
         return InterpolatedCoordinateFrame._separation(
             self,
@@ -752,9 +713,8 @@ class InterpolatedSkyCoord(SkyCoord):
         self,
         catalogcoord: CoordinateType,
         nthneighbor: int = 1,
-    ) -> Tuple[ndarray, Angle, Quantity]:
-        """
-        Finds the nearest on-sky matches of this coordinate in a set of
+    ) -> tuple[NDArray, Angle, Quantity]:
+        """Finds the nearest on-sky matches of this coordinate in a set of
         catalog coordinates.
 
         For more on how to use this (and related) functionality, see the
@@ -801,7 +761,7 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.match_coordinates_sky
         SkyCoord.match_to_catalog_3d
         """
-        idx: ndarray  # pragma: no cover
+        idx: NDArray  # pragma: no cover
         sep2d: Angle  # pragma: no cover
         dist3d: Quantity  # pragma: no cover
         idx, sep2d, dist3d = super().match_to_catalog_sky(
@@ -814,9 +774,8 @@ class InterpolatedSkyCoord(SkyCoord):
         self,
         catalogcoord: CoordinateType,
         nthneighbor: int = 1,
-    ) -> Tuple[ndarray, Angle, Quantity]:
-        """
-        Finds the nearest 3-dimensional matches of this coordinate to a set
+    ) -> tuple[NDArray, Angle, Quantity]:
+        """Finds the nearest 3-dimensional matches of this coordinate to a set
         of catalog coordinates.
 
         This finds the 3-dimensional closest neighbor, which is only different
@@ -865,7 +824,7 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.match_coordinates_3d
         SkyCoord.match_to_catalog_sky
         """
-        idx: ndarray  # pragma: no cover
+        idx: NDArray  # pragma: no cover
         sep2d: Angle  # pragma: no cover
         dist3d: Quantity  # pragma: no cover
         idx, sep2d, dist3d = super().match_to_catalog_3d(
@@ -878,9 +837,8 @@ class InterpolatedSkyCoord(SkyCoord):
         self,
         searcharoundcoords: CoordinateType,
         seplimit: Quantity,
-    ) -> Tuple[ndarray, ndarray, Angle, Quantity]:
-        """
-        Searches for all coordinates in this object around a supplied set of
+    ) -> tuple[NDArray, NDArray, Angle, Quantity]:
+        """Searches for all coordinates in this object around a supplied set of
         points within a given on-sky separation.
 
         This is intended for use on `~astropy.coordinates.SkyCoord` objects
@@ -932,8 +890,8 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.search_around_sky
         SkyCoord.search_around_3d
         """
-        idxsearch: ndarray  # pragma: no cover
-        idxself: ndarray  # pragma: no cover
+        idxsearch: NDArray  # pragma: no cover
+        idxself: NDArray  # pragma: no cover
         sep2d: Angle  # pragma: no cover
         dist3d: Quantity  # pragma: no cover
         idxsearch, idxself, sep2d, dist3d = super().search_around_sky(
@@ -946,8 +904,9 @@ class InterpolatedSkyCoord(SkyCoord):
         self,
         searcharoundcoords: CoordinateType,
         distlimit: Quantity,
-    ) -> Tuple[ndarray, ndarray, Angle, Quantity]:
-        """
+    ) -> tuple[NDArray, NDArray, Angle, Quantity]:
+        """Searches for all coordinates in this object around a point(s).
+
         Searches for all coordinates in this object around a supplied set of
         points within a given 3D radius.
 
@@ -1000,8 +959,8 @@ class InterpolatedSkyCoord(SkyCoord):
         astropy.coordinates.search_around_3d
         SkyCoord.search_around_sky
         """
-        idxsearch: ndarray  # pragma: no cover
-        idxself: ndarray  # pragma: no cover
+        idxsearch: NDArray  # pragma: no cover
+        idxself: NDArray  # pragma: no cover
         sep2d: Angle  # pragma: no cover
         dist3d: Quantity  # pragma: no cover
         idxsearch, idxself, sep2d, dist3d = super().search_around_3d(

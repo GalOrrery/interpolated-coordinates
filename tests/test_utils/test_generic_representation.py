@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Testing :mod:`~interpolated_coordinates.utils.generic_representation`."""
 
 __all__ = [
@@ -11,12 +9,10 @@ __all__ = [
 ##############################################################################
 # IMPORTS
 
-# THIRD PARTY
 import astropy.coordinates as coord
 import astropy.units as u
 import pytest
 
-# LOCAL
 from interpolated_coordinates.utils import generic_representation as gr
 
 ##############################################################################
@@ -27,7 +23,7 @@ from interpolated_coordinates.utils import generic_representation as gr
 def test_getattr():
     # failed get
     with pytest.raises(AttributeError):
-        gr.this_is_not_an_attribute
+        gr.this_is_not_an_attribute  # noqa: B018
 
     # get a representation
     assert issubclass(gr.GenericRadialRepresentation, coord.RadialRepresentation)
@@ -41,7 +37,7 @@ def test_getattr():
     assert issubclass(gr.GenericRadial2ndDifferential, gr.GenericDifferential)
 
 
-def test_GENERIC_REGISTRY():
+def test_GENERIC_REGISTRY():  # noqa: N802
     """Test :obj:`~interpolated_coordinates.utils.generic_representation._GENERIC_REGISTRY`."""
     # Check type
     assert isinstance(gr._GENERIC_REGISTRY, dict)
@@ -107,7 +103,7 @@ class Test_GenericRepresentation:
 
 class Test_GenericRepresentationSubclass(Test_GenericRepresentation):
     @pytest.fixture(scope="class", autouse=True)
-    def setup_cleanup(self, rep_cls):
+    def _setup_cleanup(self, rep_cls):
         yield  # run tests
 
         coord.representation.REPRESENTATION_CLASSES.pop("genericrepresentationsubclass")
@@ -115,7 +111,7 @@ class Test_GenericRepresentationSubclass(Test_GenericRepresentation):
     @pytest.fixture(scope="class")
     def rep_cls(self):
         class GenericRepresentationSubClass(gr.GenericRepresentation):
-            attr_classes = dict(q1=u.Quantity, q2=u.Quantity, q3=u.Quantity)
+            attr_classes = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
 
             def from_cartesian(self):
                 pass
@@ -139,7 +135,7 @@ class Test_GenericRepresentationSubclass(Test_GenericRepresentation):
         assert tuple(rep.attr_classes.keys()) == ("q1", "q2", "q3")
 
     @pytest.mark.parametrize(
-        "q1, q2, q3",
+        ("q1", "q2", "q3"),
         [
             (1, 2, 3),  # no units
             (1 * u.km, 2, 3),  # mixed units
@@ -229,7 +225,7 @@ class Test_GenericDifferential:
         # ------------------
         # n too small
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="n < 1"):
             dif_cls._make_generic_cls(coord.SphericalDifferential, n=0)
 
         # ------------------
@@ -291,7 +287,7 @@ class Test_GenericDifferential:
 
 class Test_GenericDifferentialSubClass:
     @pytest.fixture(scope="class", autouse=True)
-    def setup_cleanup(self, rep_cls, dif_cls):
+    def _setup_cleanup(self, rep_cls, dif_cls):
         yield  # run tests
 
         coord.representation.REPRESENTATION_CLASSES.pop("genericrepresentationsubclass")
@@ -300,7 +296,7 @@ class Test_GenericDifferentialSubClass:
     @pytest.fixture(scope="class")
     def rep_cls(self):
         class GenericRepresentationSubClass(gr.GenericRepresentation):
-            attr_classes = dict(q1=u.Quantity, q2=u.Quantity, q3=u.Quantity)
+            attr_classes = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
 
             def from_cartesian(self):
                 pass
@@ -330,7 +326,7 @@ class Test_GenericDifferentialSubClass:
     # ===============================================================
 
     @pytest.mark.parametrize(
-        "q1, q2, q3",
+        ("q1", "q2", "q3"),
         [
             (1, 2, 3),  # no units
             (1 * u.km, 2, 3),  # mixed units

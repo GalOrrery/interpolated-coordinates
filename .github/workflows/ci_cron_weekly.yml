@@ -39,7 +39,7 @@ jobs:
 
           - name: Documentation link check
             os: ubuntu-latest
-            python: 3.8
+            python: '3.10'
             toxenv: linkcheck
 
     steps:

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Type hints.
 
 This project extensively uses :mod:`~typing` hints.
@@ -18,44 +16,31 @@ __all__ = [
 
 __credits__ = ["Astropy"]
 
+from typing import Union
 
-##############################################################################
-# IMPORTS
-
-# STDLIB
-import typing as T
-
-# THIRD PARTY
 import astropy.coordinates as coord
 import astropy.units as u
 import numpy as np
 
-##############################################################################
-# TYPES
-##############################################################################
-
 # -------------------------------------
 # NumPy types
 
-ArrayLike = T.Union[float, np.ndarray]  # np.generic isn't compatible
+ArrayLike = Union[float, np.ndarray]  # np.generic isn't compatible
 
 
 # -------------------------------------
 # Astropy types
 
-RepLikeType = T.Union[coord.BaseRepresentation, str]
+RepLikeType = Union[coord.BaseRepresentation, str]
 
-CoordinateType = T.Union[coord.BaseCoordinateFrame, coord.SkyCoord]
+CoordinateType = Union[coord.BaseCoordinateFrame, coord.SkyCoord]
 """|Frame| or |SkyCoord|"""
 
-FrameLikeType = T.Union[CoordinateType, str]
+FrameLikeType = Union[CoordinateType, str]
 """|Frame| or |SkyCoord| or `str`"""
 
-UnitType = T.Union[u.UnitBase, u.FunctionUnitBase]
+UnitType = Union[u.UnitBase, u.FunctionUnitBase]
 """|Unit| or :class:`~astropy.units.FunctionUnitBase`"""
 
-UnitLikeType = T.Union[UnitType, str]
+UnitLikeType = Union[UnitType, str]
 """|Unit| or :class:`~astropy.units.FunctionUnitBase` or str"""
-
-##############################################################################
-# END

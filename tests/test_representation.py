@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Testing :mod:`~interpolated_coordinates.representation`."""
 
 __all__ = [
@@ -13,16 +11,14 @@ __all__ = [
 ##############################################################################
 # IMPORTS
 
-# STDLIB
 import operator
+import re
 
-# THIRD PARTY
 import astropy.coordinates as coord
 import astropy.units as u
 import numpy as np
 import pytest
 
-# LOCAL
 from interpolated_coordinates.representation import (
     InterpolatedBaseRepresentationOrDifferential,
     InterpolatedCartesianRepresentation,
@@ -51,9 +47,7 @@ def test_find_first_best_compatible_differential():
 
     # ----------------------------
     # TODO! test when it doesn't
-    # rep = coord.CartesianRepresentation(x=1, y=2, z=3)
     # # find differential
-    # dif = icrd_cls(rep)
     # assert dif is coord.CartesianDifferential
 
 
@@ -103,13 +97,12 @@ class InterpolatedCoordinatesBase:
         return coord.CartesianDifferential
 
     @pytest.fixture(scope="class")
-    def dif(self, num):
-        diff = coord.CartesianDifferential(
+    def dif(self, dif_cls, num):
+        return dif_cls(
             d_x=np.linspace(3, 4, num=num) * (u.km / u.s),
             d_y=np.linspace(4, 5, num=num) * (u.km / u.s),
             d_z=np.linspace(5, 6, num=num) * (u.km / u.s),
         )
-        return diff
 
     @pytest.fixture(scope="class")
     def rep_cls(self):
@@ -117,13 +110,12 @@ class InterpolatedCoordinatesBase:
 
     @pytest.fixture(scope="class")
     def rep(self, rep_cls, num, dif):
-        rep = rep_cls(
+        return rep_cls(
             x=np.linspace(0, 1, num=num) * u.kpc,
             y=np.linspace(1, 2, num=num) * u.kpc,
             z=np.linspace(2, 3, num=num) * u.kpc,
             differentials=dif,
         )
-        return rep
 
     @pytest.fixture(scope="class")
     def rep_nodif(self, rep):
@@ -148,9 +140,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
                 rep = self.data._scale_operation(op, *args)
                 return self._realize_class(rep, self.affine)
 
-        inst = SubClass(rep, affine=affine)
-
-        return inst
+        return SubClass(rep, affine=affine)
 
     # TODO? have idif & idif_cls at this level?
 
@@ -172,13 +162,13 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         # ------------------
         # affine not 1-D
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=re.escape("`affine` must be 1-D.")):
             irep_cls(rep, affine=affine.reshape((-1, 2)))
 
         # ------------------
         # affine not right length
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=re.escape("`affine` must be same length as `rep`")):
             irep_cls(rep, affine=affine[::2])
 
         # ------------------
@@ -197,7 +187,6 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         # differentials already interpolated
 
         # TODO
-        # irep = irep_cls(rep=rep, affine=affine)
 
     def test_affine(self, irep, affine) -> None:
         """Test method ``affine`."""
@@ -217,7 +206,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
 
     def test_call(self, irep) -> None:
         """Test method ``__call__``."""
-        pass  # it's abstract and empty
+        # it's abstract and empty
 
     def test_derivative_type(self, irep) -> None:
         """Test method ``derivative_type``."""
@@ -246,7 +235,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
 
         # will fail until cache in "differentials"
         if hasattr(irep, "_derivatives"):  # skip differentials
-            assert not any(["affine " in irep._derivatives.keys()])
+            assert not any(["affine " in irep._derivatives])
 
     def test_derivative(self, irep, affine) -> None:
         """Test method ``derivative``.
@@ -283,8 +272,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         assert not hasattr(irep, "antiderivative")
 
     def test___class__(self, irep) -> None:
-        """
-        Test method ``__class__``, which is overridden to match the
+        """Test method ``__class__``, which is overridden to match the
         non-intperpolated data.
         """
         assert irep.__class__ is irep.data.__class__
@@ -397,7 +385,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
         # -------------------
         # fails
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=re.escape("`affine` must be same length as `rep`")):
             irep.from_cartesian(rep[::2])
 
     def test_to_cartesian(self, irep) -> None:
@@ -445,8 +433,6 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
 
     def test_new(self, irep_cls, rep, affine) -> None:
         """Test method ``__init__``."""
-        # super().test_new(irep_cls=irep_cls, rep=rep, affine=affine)  # not abstract
-
         # test it redirects
         irep = irep_cls(
             rep.represent_as(coord.CartesianRepresentation),
@@ -458,10 +444,6 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
     def test_init(self, irep_cls, rep, affine) -> None:
         """Test method ``__init__``."""
         super().test_init(irep_cls=irep_cls, rep=rep, affine=affine)
-
-        # Test not instantiated
-        with pytest.raises(ValueError, match="Must instantiate `rep`"):
-            irep_cls(rep.__class__, affine=affine)
 
         # Test wrong type
         with pytest.raises(TypeError, match="`rep` must be"):
@@ -482,7 +464,6 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
         Tested in astropy. Here only need to test it stays interpolated
 
         """
-        # super().test_represent_as()
         got = irep.represent_as(coord.PhysicsSphericalRepresentation)
 
         assert isinstance(got, coord.PhysicsSphericalRepresentation)
@@ -490,8 +471,6 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
 
     def test_with_differentials(self, irep, rep) -> None:
         """Test method ``with_differentials``."""
-        # super().test_with_differentials()
-
         got = irep.with_differentials(
             rep.differentials["s"].represent_as(
                 coord.CartesianDifferential,
@@ -507,8 +486,6 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
 
     def test_without_differentials(self, irep) -> None:
         """Test method ``without_differentials``."""
-        # super().test_without_differentials()
-
         got = irep.without_differentials()
 
         assert isinstance(got, irep.__class__)
@@ -521,14 +498,14 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
         irep.derivative(n=1)
         irep.derivative(n=2)
 
-        assert "affine 1" in irep._derivatives.keys()
-        assert "affine 2" in irep._derivatives.keys()
+        assert "affine 1" in irep._derivatives
+        assert "affine 2" in irep._derivatives
 
         irep.clear_derivatives()
 
         assert "affine 1" not in irep._derivatives.keys()
         assert "affine 2" not in irep._derivatives.keys()
-        assert not any(["affine " in irep._derivatives.keys()])
+        assert not any(["affine " in irep._derivatives])
 
     def test_derivative(self, irep, affine) -> None:
         """Test method ``derivative``."""
@@ -537,8 +514,8 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
         # Testing cache, it's the only thing different between
         # InterpolatedBaseRepresentationOrDifferential and
         # InterpolatedRepresentation
-        assert "affine 1" in irep._derivatives.keys()
-        assert "affine 2" in irep._derivatives.keys()
+        assert "affine 1" in irep._derivatives
+        assert "affine 2" in irep._derivatives
 
         assert irep.derivative(n=1) is irep._derivatives["affine 1"]
         assert irep.derivative(n=2) is irep._derivatives["affine 2"]
@@ -722,8 +699,6 @@ class Test_InterpolatedDifferential(Test_InterpolatedBaseRepresentationOrDiffere
 
     def test_new(self, idif_cls, dif, affine) -> None:
         """Test method ``__new__``."""
-        # super().test_new(irep_cls=idif_cls, rep=dif, affine=affine)  # not abstract
-
         # test wrong type
         with pytest.raises(TypeError, match="`rep` must be a differential type."):
             idif_cls(object())
@@ -745,8 +720,6 @@ class Test_InterpolatedDifferential(Test_InterpolatedBaseRepresentationOrDiffere
         it is interpolated.
 
         """
-        # super().test_represent_as()
-
         got = idif.represent_as(
             coord.PhysicsSphericalDifferential,
             base=coord.PhysicsSphericalRepresentation(0 * u.rad, 0 * u.rad, 0 * u.km),

@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
-# THIRD PARTY
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.visualization import quantity_support
 
-# LOCAL
 from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
 
 quantity_support()

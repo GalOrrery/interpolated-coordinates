@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
 # This file needs to be included here to make sure commands such
@@ -6,11 +5,10 @@
 # will ignore the conftest.py file at the root of the repository
 # and the one in astropy/conftest.py
 
-# STDLIB
 import os
+import pathlib
 import tempfile
 
-# THIRD PARTY
 import pytest
 
 # Make sure we use temporary directories for the config and cache
@@ -19,8 +17,8 @@ import pytest
 os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp("interpolated_coodinates_config")
 os.environ["XDG_CACHE_HOME"] = tempfile.mkdtemp("interpolated_coodinates_cache")
 
-os.mkdir(os.path.join(os.environ["XDG_CONFIG_HOME"], "interpolated_coodinates"))
-os.mkdir(os.path.join(os.environ["XDG_CACHE_HOME"], "interpolated_coodinates"))
+(pathlib.Path(os.environ["XDG_CONFIG_HOME"]) / "interpolated_coodinates").mkdir()
+(pathlib.Path(os.environ["XDG_CACHE_HOME"]) / "interpolated_coodinates").mkdir()
 
 # Note that we don't need to change the environment variables back or remove
 # them after testing, because they are only changed for the duration of the

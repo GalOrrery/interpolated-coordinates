@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Testing :mod:`~interpolated_coordinates.frame`."""
 
 __all__ = [
@@ -11,20 +9,21 @@ __all__ = [
 ##############################################################################
 # IMPORTS
 
-# THIRD PARTY
+import re
+
 import astropy.coordinates as coord
 import astropy.units as u
 import numpy as np
 import pytest
 
-# LOCAL
-from .test_representation import InterpolatedCoordinatesBase
 from interpolated_coordinates.frame import (
     InterpolatedCoordinateFrame,
     InterpolatedRepresentation,
     InterpolatedSkyCoord,
 )
 from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
+
+from .test_representation import InterpolatedCoordinatesBase
 
 ##############################################################################
 # TESTS
@@ -121,12 +120,12 @@ class Test_InterpolatedCoordinateFrame(InterpolatedCoordinatesBase):
     @pytest.mark.skip("TODO")
     def test__realize_class(self, icrd) -> None:
         """Test method ``_realize_class``."""
-        assert False
+        raise AssertionError
 
     @pytest.mark.skip("TODO")
     def test_realize_frame(self, icrd) -> None:
         """Test method ``realize_frame``."""
-        assert False
+        raise AssertionError
 
     def test_derivative(self, icrd, affine) -> None:
         """Test method ``derivative``.
@@ -228,8 +227,7 @@ class Test_InterpolatedCoordinateFrame(InterpolatedCoordinatesBase):
     def test___getitem__(self, icrd_cls, icrd) -> None:
         """Test method ``__getitem__``."""
         # Test has problem when slicing with <3 elements
-        # TODO? fix?
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match=re.escape("(m>k) failed for hidden m")):
             icrd[:3]
 
         # works otherwise
@@ -543,19 +541,19 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
 
     def test_match_to_catalog_sky(self) -> None:
         """Test method ``match_to_catalog_sky``."""
-        pass  # it just calls super b/c docstring issues
+        # it just calls super b/c docstring issues
 
     def test_match_to_catalog_3d(self) -> None:
         """Test method ``match_to_catalog_3d``."""
-        pass  # it just calls super b/c docstring issues
+        # it just calls super b/c docstring issues
 
     def test_search_around_sky(self) -> None:
         """Test method ``search_around_sky``."""
-        pass  # it just calls super b/c docstring issues
+        # it just calls super b/c docstring issues
 
     def test_search_around_3d(self) -> None:
         """Test method ``search_around_3d``."""
-        pass  # it just calls super b/c docstring issues
+        # it just calls super b/c docstring issues
 
 
 #####################################################################
@@ -563,15 +561,15 @@ class Test_InterpolatedSkyCoord(InterpolatedCoordinatesBase):
 
 
 @pytest.mark.skip("TODO")
-def test_InterpolatedRepresentation_in_CoordinateFrame():
-    assert False
+def test_InterpolatedRepresentation_in_CoordinateFrame():  # noqa: N802
+    raise AssertionError
 
 
 @pytest.mark.skip("TODO")
-def test_InterpolatedCoordinateFrame_in_SkyCoord():
-    assert False
+def test_InterpolatedCoordinateFrame_in_SkyCoord():  # noqa: N802
+    raise AssertionError
 
 
 @pytest.mark.skip("TODO")
-def test_InterpolatedRepresentation_in_CoordinateFrame_in_SkyCoord():
-    assert False
+def test_InterpolatedRepresentation_in_CoordinateFrame_in_SkyCoord():  # noqa: N802
+    raise AssertionError
