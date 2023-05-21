@@ -23,7 +23,7 @@ classifiers = [
 dependencies = [
     "astropy>=5.0",
     "numpy",
-    "scipy",
+    "scipy>=1.6",
 ]
 
 [build-system]
