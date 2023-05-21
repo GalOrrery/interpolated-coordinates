@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Configure Test Suite.
 
 This file is used to configure the behavior of pytest when using the Astropy
@@ -8,52 +7,42 @@ get picked up when running the tests inside an interpreter using
 
 """
 
-##############################################################################
-# IMPORTS
-
-# STDLIB
 import os
+import pathlib
+from typing import Any
 
-# THIRD PARTY
 import pytest
-
-try:
-    # THIRD PARTY
-    from pytest_astropy_header.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
-
-    ASTROPY_HEADER = True
-except ImportError:
-    ASTROPY_HEADER = False
+from pytest_astropy_header.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
 
 ##############################################################################
 # CODE
 ##############################################################################
 
 
-def pytest_configure(config) -> None:
+def pytest_configure(config: Any) -> None:
     """Configure :mod:`pytest` with :mod:`astropy`.
 
     Parameters
     ----------
     config : pytest configuration
+        Configuration for :mod:`pytest`.
     """
-    if ASTROPY_HEADER:
-        config.option.astropy_header = True
+    config.option.astropy_header = True
 
-        # Customize the following lines to add/remove entries from the list of
-        # packages for which version numbers are displayed when running the tests.
-        PYTEST_HEADER_MODULES.pop("Pandas", None)
-        PYTEST_HEADER_MODULES["scikit-image"] = "skimage"
+    # Customize the following lines to add/remove entries from the list of
+    # packages for which version numbers are displayed when running the tests.
+    PYTEST_HEADER_MODULES.pop("Pandas", None)
+    PYTEST_HEADER_MODULES["scikit-image"] = "skimage"
 
-        # LOCAL
-        from . import __version__
+    from . import __version__
 
-        packagename = os.path.basename(os.path.dirname(__file__))
-        TESTED_VERSIONS[packagename] = __version__
+    packagename = pathlib.Path(__file__).resolve().parent.name
+    TESTED_VERSIONS[packagename] = __version__
 
 
 # This has to be in the root dir or it will not display in CI.
-def pytest_report_header(config):
+def pytest_report_header(config: Any) -> str:  # noqa: ARG001
+    """Add extra info to the :mod:`pytest` header."""
     # This gets added after the pytest-astropy-header output.
     return (
         f'ARCH_ON_CI: {os.environ.get("ARCH_ON_CI", "undefined")}\n'
@@ -65,31 +54,29 @@ def pytest_report_header(config):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def add_numpy(doctest_namespace) -> None:
+def _add_numpy(doctest_namespace: Any) -> None:
     """Add :mod:`numpy` to :mod:`pytest`.
 
     Parameters
     ----------
     doctest_namespace : namespace
-
+        Namespace for doctests.
     """
-    # THIRD PARTY
-    import numpy
+    import numpy as np
 
     # add to namespace
-    doctest_namespace["np"] = numpy
+    doctest_namespace["np"] = np
 
 
 @pytest.fixture(scope="session", autouse=True)
-def add_astropy(doctest_namespace) -> None:
+def _add_astropy(doctest_namespace: Any) -> None:
     """Add :mod:`astropy` stuff to :mod:`pytest`.
 
     Parameters
     ----------
     doctest_namespace : namespace
-
+        Namespace for doctests.
     """
-    # THIRD PARTY
     import astropy.coordinates as coord
     import astropy.units
 

@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
+r"""Generic versions of the |Representation| in :mod:`astropy`.
 
-r"""
-Generic versions of the |Representation| in :mod:`astropy`, assuming less about
-the constituent dimensions than their astropy counterparts.
-This can be useful for working with phase-spaces that are not real-space
-positions (or derivates thereof). However, care should be taken when using many
-of the methods of these generic representations since they inherit from the
-astropy real-space representation machinery.
+These classes assume less about the constituent dimensions than their astropy
+counterparts. This can be useful for working with phase-spaces that are not
+real-space positions (or derivates thereof). However, care should be taken when
+using many of the methods of these generic representations since they inherit
+from the astropy real-space representation machinery.
 
 You will probably not be instantiating these classes directly, but encountering
 them from :mod:`interpolated_coordinates` classes like
-:class:`interpolated_coordinates.InterpolatedSkyCoord`.
-However, one can get and use the classes, with all the above-noted caveats:
+:class:`interpolated_coordinates.InterpolatedSkyCoord`. However, one can get and
+use the classes, with all the above-noted caveats:
 
     >>> import astropy.units as u
     >>> from interpolated_coordinates.utils.generic_representation import \
@@ -42,13 +40,11 @@ are primarily useful for consistent and familiar data storage.
 
 from __future__ import annotations
 
-# STDLIB
-import functools
 import inspect
 import sys
-import typing as T
+from functools import reduce
+from typing import Any, cast
 
-# THIRD PARTY
 import astropy.coordinates as coord
 import astropy.units as u
 from astropy.coordinates.representation import DIFFERENTIAL_CLASSES
@@ -61,10 +57,10 @@ __all__ = [
 ##############################################################################
 # PARAMETERS
 
-_GENERIC_REGISTRY: T.Dict[
-    T.Union[object, str],
-    T.Union[GenericRepresentation, GenericDifferential],
-] = dict()
+_GENERIC_REGISTRY: dict[
+    object | str,
+    GenericRepresentation | GenericDifferential,
+] = {}
 
 
 ##############################################################################
@@ -111,13 +107,13 @@ class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDif
     methods (see those methods for details).
     """
 
-    attr_classes = dict(q1=u.Quantity, q2=u.Quantity, q3=u.Quantity)
+    attr_classes = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
 
     @staticmethod
     def _make_generic_cls(
-        rep_cls: T.Union[coord.BaseRepresentation, GenericRepresentation],
+        rep_cls: coord.BaseRepresentation | GenericRepresentation,
     ) -> GenericRepresentation:
-        """Factory for making a generic form of a representation.
+        """Return a generic form of a representation.
 
         Parameters
         ----------
@@ -147,21 +143,19 @@ class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDif
             bases = (GenericRepresentation, rep_cls)
 
             # attributes: copies `attr_classes`
-            attrs_meths = dict(attr_classes=rep_cls.attr_classes)
+            attrs_meths = {"attr_classes": rep_cls.attr_classes}
             # add link from `qX` to the attr method  # TODO!
             # for i, k in enumerate(rep_cls.attr_classes.keys()):
             #     def get_attr(self):
-            #         return getattr(self, f"_{k}")
-            #     attrs_meths[f"_q{i}"] = property(get_attr)
 
-            cls = T.cast(GenericRepresentation, type(name, bases, attrs_meths))
+            cls = cast(GenericRepresentation, type(name, bases, attrs_meths))
 
             # cache b/c can only define the same Rep/Dif once
             _GENERIC_REGISTRY[rep_cls] = cls
 
             # also store in locals
             setattr(sys.modules[__name__], cls.__name__, cls)
-            getattr(sys.modules[__name__], "__all__").append(cls.__name__)
+            sys.modules[__name__].__all__.append(cls.__name__)
 
         return cls
 
@@ -184,8 +178,8 @@ def _ordinal(n: int) -> str:
     str
         Ordinal form `n`. Ex 1 -> '1st', 2 -> '2nd', 3 -> '3rd'.
     """
-    i: int = n % 5 * (n % 100 ^ 15 > 4 > n % 10)
-    return str(n) + "tsnrhtdd"[i::4]  # noqa: E203
+    i: int = n % 5 * (n % 100 ^ 15 > 4 > n % 10)  # noqa: PLR2004
+    return str(n) + "tsnrhtdd"[i::4]
 
 
 class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDifferential):
@@ -209,7 +203,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
 
     @staticmethod
     def _make_generic_cls(
-        dif_cls: T.Union[coord.BaseDifferential, GenericDifferential],
+        dif_cls: coord.BaseDifferential | GenericDifferential,
         n: int = 1,
     ) -> GenericDifferential:
         """Make Generic Differential.
@@ -234,8 +228,9 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
             return dif_cls
 
         # 2) check if `n` is too small to make a differential
-        elif n < 1:
-            raise ValueError("n < 1")
+        if n < 1:
+            msg = "n < 1"
+            raise ValueError(msg)
 
         # 3) make name for generic.
         if n == 1:  # a) special case for n=1
@@ -258,20 +253,25 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
 
             # get base representation from differential class.
             # and then get the generic form
-            generic_base = GenericRepresentation._make_generic_cls(dif_cls.base_representation)
+            generic_base = GenericRepresentation._make_generic_cls(
+                dif_cls.base_representation,
+            )
 
             # attributes: copies `attr_classes`
-            attrs_meths = dict(attr_classes=dif_cls.attr_classes, base_representation=generic_base)
+            attrs_meths = {
+                "attr_classes": dif_cls.attr_classes,
+                "base_representation": generic_base,
+            }
 
             # Make generic differential
-            cls = T.cast(GenericDifferential, type(name, bases, attrs_meths))
+            cls = cast(GenericDifferential, type(name, bases, attrs_meths))
 
             # cache, either by class or by name
             _GENERIC_REGISTRY[dif_cls if n == 1 else name] = cls
 
             # also store in locals
             setattr(sys.modules[__name__], cls.__name__, cls)
-            getattr(sys.modules[__name__], "__all__").append(cls.__name__)
+            sys.modules[__name__].__all__.append(cls.__name__)
 
         return cls
 
@@ -284,7 +284,8 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
 
         Parameters
         ----------
-        rep_cls : |Representation|
+        rep_cls : |Representation| class
+            Representation class for which to make generic.
         n : int
             Must be >= 1
 
@@ -308,12 +309,12 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
             cls = GenericDifferential._make_generic_cls(dcls, n=n)
 
         else:
-            cls = T.cast(
+            cls = cast(
                 GenericDifferential,
                 type(
                     name,
                     (GenericDifferential, rep_cls),
-                    dict(base_representation=rep_cls),
+                    {"base_representation": rep_cls},
                 ),
             )
 
@@ -321,7 +322,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
 
             # also store in locals
             setattr(sys.modules[__name__], cls.__name__, cls)
-            getattr(sys.modules[__name__], "__all__").append(cls.__name__)
+            sys.modules[__name__].__all__.append(cls.__name__)
 
         return cls
 
@@ -335,6 +336,7 @@ def __getattr__(name: str) -> type:
     Parameters
     ----------
     name : str
+        Name of the class.
 
     Returns
     -------
@@ -352,15 +354,15 @@ def __getattr__(name: str) -> type:
     if name.endswith("Differential"):  # strip the ordinal
         # Get the type, e.g. Cartesian
         i: int = len("Differential")
-        kind: str = functools.reduce(lambda k, n: k.split(n)[0], "0123456789", name[:-i])
+        kind: str = reduce(lambda k, n: k.split(n)[0], "0123456789", name[:-i])
         # Get order of the differential
         j: int = len(kind)
-        ord: str = functools.reduce(lambda o, s: o.split(s)[0], "tsnrhd", name[j:-i])
-        n: int = int(ord) if ord else 1  # 1st derivative is an empty string
+        order: str = reduce(lambda o, s: o.split(s)[0], "tsnrhd", name[j:-i])
+        n: int = int(order) if order else 1  # 1st derivative is an empty string
 
         name = kind + "Differential"
 
-    cls: T.Union[coord.RepresentationOrDifferential, T.Any]
+    cls: coord.RepresentationOrDifferential | Any
     if cls := getattr(coord, name, False):
         generic_cls: GenericRepresentationOrDifferential
         if inspect.isclass(cls) and issubclass(cls, coord.BaseRepresentation):
@@ -368,14 +370,14 @@ def __getattr__(name: str) -> type:
         elif inspect.isclass(cls) and issubclass(cls, coord.BaseDifferential):
             generic_cls = GenericDifferential._make_generic_cls(cls, n=n)
         else:
-            raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+            msg = f"module {__name__!r} has no attribute {name!r}"
+            raise AttributeError(msg)
 
         return generic_cls
 
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    msg = f"module {__name__!r} has no attribute {name!r}"
+    raise AttributeError(msg)
 
 
 # def __dir__():
-#     dir_out = list(globals())
-#     []
 #     return sorted(dir_out + __all__ + )

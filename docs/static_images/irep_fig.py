@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
-# THIRD PARTY
 import astropy.coordinates as coord
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
 
-# LOCAL
 import interpolated_coordinates as icoord
 
 # Making a Representation

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Testing :mod:`~interpolated_coordinates.utils.splines`."""
 
 __all__ = [
@@ -8,17 +6,11 @@ __all__ = [
     "Test_LSQUnivariateSplinewithUnits",
 ]
 
-
-##############################################################################
-# IMPORTS
-
-# THIRD PARTY
 import astropy.units as u
 import numpy as np
 import pytest
 from astropy.tests.helper import assert_quantity_allclose
 
-# LOCAL
 from interpolated_coordinates.utils import spline
 
 ##############################################################################
@@ -43,11 +35,11 @@ class Test_UnivariateSplinewithUnits:
 
     @pytest.fixture(scope="class")
     def w(self, num):
-        return np.random.rand(num)  # TODO? make deterministic?
+        return np.random.default_rng().uniform(0, 1, size=num)
 
     @pytest.fixture(scope="class")
     def extra_args(self):
-        return dict(s=None, k=3, ext=0, check_finite=False)
+        return {"s": None, "k": 3, "ext": 0, "check_finite": False}
 
     @pytest.fixture(scope="class")
     def bbox(self):
@@ -70,14 +62,14 @@ class Test_UnivariateSplinewithUnits:
         w = w if _w is ... else _w
         bbox = bbox if _bbox is ... else _bbox
 
-        yield ispline_cls(x, y, w=w, bbox=bbox, **extra_args)
+        return ispline_cls(x, y, w=w, bbox=bbox, **extra_args)
 
     # -------------------------------
 
     def test_fail_init(self, ispline_cls, x, y):
         """Test a failed initialization b/c wrong units."""
+        bad_unit = x.unit / u.m
         with pytest.raises(u.UnitConversionError):
-            bad_unit = x.unit / u.m
             ispline_cls(x, y, bbox=[0 * bad_unit, 180 * bad_unit])
 
     def test_x_unit(self, spls):
@@ -142,7 +134,7 @@ class Test_InterpolatedUnivariateSplinewithUnits(Test_UnivariateSplinewithUnits)
 
     @pytest.fixture(scope="class")
     def extra_args(self):
-        return dict(k=3, ext=0, check_finite=False)
+        return {"k": 3, "ext": 0, "check_finite": False}
 
     @pytest.fixture(scope="class")
     def ispline_cls(self):
@@ -165,7 +157,7 @@ class Test_LSQUnivariateSplinewithUnits(Test_UnivariateSplinewithUnits):
 
     @pytest.fixture(scope="class")
     def extra_args(self):
-        return dict(k=3, ext=0, check_finite=False)
+        return {"k": 3, "ext": 0, "check_finite": False}
 
     @pytest.fixture(scope="class")
     def ispline_cls(self):
@@ -174,7 +166,11 @@ class Test_LSQUnivariateSplinewithUnits(Test_UnivariateSplinewithUnits):
     @pytest.fixture(scope="class")
     def t(self, ispline_cls, x, y, extra_args):
         spl = spline.InterpolatedUnivariateSplinewithUnits(
-            x, y, w=None, bbox=[None] * 2, **extra_args
+            x,
+            y,
+            w=None,
+            bbox=[None] * 2,
+            **extra_args,
         )
         return spl.get_knots().value[1:-1]
 
@@ -191,17 +187,14 @@ class Test_LSQUnivariateSplinewithUnits(Test_UnivariateSplinewithUnits):
         w = w if _w is ... else _w
         bbox = bbox if _bbox is ... else _bbox
 
-        yield ispline_cls(x, y, t, w=w, bbox=bbox, **extra_args)
+        return ispline_cls(x, y, t, w=w, bbox=bbox, **extra_args)
 
     # ===============================================================
     # Method tests
 
     def test_fail_init(self, ispline_cls, x, y, t):
         """Test a failed initialization b/c wrong units."""
+        bad_unit = x.unit / u.m
+
         with pytest.raises(u.UnitConversionError):
-            bad_unit = x.unit / u.m
             ispline_cls(x, y, t, bbox=[0 * bad_unit, 180 * bad_unit])
-
-
-##############################################################################
-# END
