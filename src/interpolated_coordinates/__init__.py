@@ -164,6 +164,9 @@ SkyCoord is wrapping an interpolated CoordinateFrame.
 
 """
 
-# ----------------------------------------------------------------------------
+from importlib.metadata import version as _get_version
+
 from .frame import *  # noqa: F403
 from .representation import *  # noqa: F403
+
+__version__ = _get_version("interpolated_coordinates")
