@@ -396,7 +396,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         return cls
 
     @__class__.setter
-    def __class__(self, value: Any) -> None:  # needed for mypy  # noqa: F811
+    def __class__(self, value: Any) -> None:  # needed for mypy
         msg = "cannot set attribute ``__class__``."
         raise TypeError(msg)
 
