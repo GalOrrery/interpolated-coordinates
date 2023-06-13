@@ -323,7 +323,7 @@ class InterpolatedCoordinateFrame:
         )
         return iframe
 
-    def _frame_attrs_repr(self) -> str:  # FIXME!!
+    def _frame_attrs_repr(self) -> str:  # TODO: correct representation
         s: str = self.frame._frame_attrs_repr()
         return s
 
