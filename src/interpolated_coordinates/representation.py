@@ -797,8 +797,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
         """
         ideriv: InterpolatedDifferential
         if f"affine {n}" in self._derivatives:
-            ideriv = self._derivatives[f"affine {n}"]
-            return ideriv
+            return self._derivatives[f"affine {n}"]
 
         ideriv = super().derivative(n=n)
         self._derivatives[f"affine {n}"] = ideriv  # cache in derivatives
@@ -944,14 +943,12 @@ class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):  #
         data: DType
 
         if affine is None:  # If None, returns representation as-is.
-            data = self.data
-            return data
+            return self.data
 
         # evaluate the spline on each argument of the position
         affine = u.Quantity(affine, copy=False)  # need to ensure Quantity
         params = {n: interp(affine) for n, interp in self._interps.items()}
-        data = self.data.__class__(**params)
-        return data
+        return self.data.__class__(**params)
 
     # ---------------------------------------------------------------
 
