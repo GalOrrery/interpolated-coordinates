@@ -940,8 +940,6 @@ class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):  #
         `~astropy.coordinates.BaseDifferential`
             Representation of type ``self.data`` evaluated with `affine`
         """
-        data: DType
-
         if affine is None:  # If None, returns representation as-is.
             return self.data
 

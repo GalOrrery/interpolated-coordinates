@@ -43,7 +43,7 @@ from __future__ import annotations
 import inspect
 import sys
 from functools import reduce
-from typing import Any, cast
+from typing import Any, ClassVar, cast
 
 import astropy.coordinates as coord
 import astropy.units as u
@@ -107,7 +107,7 @@ class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDif
     methods (see those methods for details).
     """
 
-    attr_classes = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
+    attr_classes: ClassVar[dict[str, type]] = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
 
     @staticmethod
     def _make_generic_cls(
