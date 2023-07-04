@@ -9,6 +9,8 @@ __all__ = [
 ##############################################################################
 # IMPORTS
 
+from typing import ClassVar
+
 import astropy.coordinates as coord
 import astropy.units as u
 import pytest
@@ -111,7 +113,11 @@ class Test_GenericRepresentationSubclass(Test_GenericRepresentation):
     @pytest.fixture(scope="class")
     def rep_cls(self):
         class GenericRepresentationSubClass(gr.GenericRepresentation):
-            attr_classes = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
+            attr_classes: ClassVar[dict[str, type]] = {
+                "q1": u.Quantity,
+                "q2": u.Quantity,
+                "q3": u.Quantity,
+            }
 
             def from_cartesian(self):
                 pass
@@ -296,7 +302,11 @@ class Test_GenericDifferentialSubClass:
     @pytest.fixture(scope="class")
     def rep_cls(self):
         class GenericRepresentationSubClass(gr.GenericRepresentation):
-            attr_classes = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
+            attr_classes: ClassVar[dict[str, type]] = {
+                "q1": u.Quantity,
+                "q2": u.Quantity,
+                "q3": u.Quantity,
+            }
 
             def from_cartesian(self):
                 pass
