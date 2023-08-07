@@ -503,8 +503,8 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
 
         irep.clear_derivatives()
 
-        assert "affine 1" not in irep._derivatives.keys()
-        assert "affine 2" not in irep._derivatives.keys()
+        assert "affine 1" not in irep._derivatives
+        assert "affine 2" not in irep._derivatives
         assert not any(["affine " in irep._derivatives])
 
     def test_derivative(self, irep, affine) -> None:
