@@ -8,9 +8,6 @@ build:
     pre_install:
       - git update-index --assume-unchanged docs/conf.py docs/rtd_environment.yaml
 
-conda:
-  environment: docs/rtd_environment.yaml
-
 sphinx:
   builder: html
   configuration: docs/conf.py
