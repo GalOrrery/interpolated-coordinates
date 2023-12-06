@@ -386,6 +386,11 @@ class InterpolatedBaseRepresentationOrDifferential:
     #################################################################
     # Mapping to Underlying Representation
 
+    @property
+    def uninterpolated(self) -> BaseRepresentationOrDifferential:
+        """Return the underlying Representation."""
+        return self.data
+
     # ---------------------------------------------------------------
     # Hidden methods
 
@@ -709,6 +714,13 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
         params = {n: interp(affine) for n, interp in self._interps.items()}
 
         return self.data.__class__(**params, differentials=differentials)
+
+    @property
+    def uninterpolated(self) -> BaseRepresentation:
+        """Return the underlying Representation."""
+        data = copy.deepcopy(self.data)
+        data.diffentials = {k: dif.uninterpolated for k, dif in data.differentials.items()}
+        return data
 
     # ---------------------------------------------------------------
 

@@ -155,6 +155,11 @@ class InterpolatedCoordinateFrame:
         frame = self.frame.realize_frame(data, **kwargs)
         return self._class_(frame, affine=affine, **kwargs)
 
+    @property
+    def uninterpolated(self) -> BaseCoordinateFrame:
+        """Return uninterpolated CoordinateFrame."""
+        return self.frame.realize_frame(self.frame.data.uninterpolated)
+
     #################################################################
     # Interpolation Methods
     # Mapped to underlying Representation
@@ -562,6 +567,11 @@ class InterpolatedSkyCoord(SkyCoord):
         """
         return SkyCoord(self.frame(affine))
 
+    @property
+    def uninterpolated(self) -> SkyCoord:
+        """Return uninterpolated SkyCoord."""
+        return SkyCoord(self.frame.uninterpolated)
+
     def transform_to(
         self,
         frame: FrameLikeType,
@@ -604,9 +614,7 @@ class InterpolatedSkyCoord(SkyCoord):
         ValueError
             If there is no possible transformation route.
         """
-        sc = SkyCoord(self, copy=False)  # TODO, less jank
-        nsc = sc.transform_to(frame, merge_attributes=merge_attributes)
-
+        nsc = self.uninterpolated.transform_to(frame, merge_attributes=merge_attributes)
         return self.__class__(nsc, affine=self.affine, copy=False)
 
     # -----------------------------------------------------

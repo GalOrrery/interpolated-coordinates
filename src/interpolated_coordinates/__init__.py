@@ -70,8 +70,8 @@ Note that the result is an interpolated Differential class. Higher-order
 derivatives can also be constructed, but they do not have a corresponding class
 in Astropy, so a "Generic" class is constructed.
 
-    >>> irep.derivative(n=2)[:4]
-    <InterpolatedGenericCartesian2ndDifferential (affine| d_x, d_y, d_z) in ...
+    >>> irep.derivative(n=2)[:4]  # doctest: +FLOAT_CMP
+    <InterpolatedGenericCartesian2ndDifferential (affine| d_x, d_y, d_z) in Myr| kpc / Myr2
         [(0.        , -5.41233725e-16,  3.35564909e-15, -9.45535317e-14),
          (0.25641026,  1.80411242e-17, -2.88657986e-16, -1.91326122e-14),
          (0.51282051,  5.77315973e-16, -3.93296506e-15,  5.62883073e-14),
