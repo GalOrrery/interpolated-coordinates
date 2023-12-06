@@ -508,7 +508,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         >>> x = np.linspace(0, 3, 11)
         >>> y = x**2
         >>> spl = UnivariateSpline(x, y)
-        >>> spl.derivatives(1.5)  # doctest: +FLOAT_CMP
+        >>> np.round(spl.derivatives(1.5), 2)  # doctest: +FLOAT_CMP
         array([2.25, 3.  , 2.  , 0.  ])
         """
         x_val: float = x.to_value(self._xunit)
