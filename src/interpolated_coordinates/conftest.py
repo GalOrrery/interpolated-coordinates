@@ -26,6 +26,7 @@ def pytest_configure(config: Any) -> None:
     ----------
     config : pytest configuration
         Configuration for :mod:`pytest`.
+
     """
     config.option.astropy_header = True
 
@@ -61,6 +62,7 @@ def _add_numpy(doctest_namespace: Any) -> None:
     ----------
     doctest_namespace : namespace
         Namespace for doctests.
+
     """
     import numpy as np
 
@@ -76,6 +78,7 @@ def _add_astropy(doctest_namespace: Any) -> None:
     ----------
     doctest_namespace : namespace
         Namespace for doctests.
+
     """
     import astropy.coordinates as coord
     import astropy.units

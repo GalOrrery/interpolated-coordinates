@@ -64,6 +64,7 @@ class InterpolatedCoordinateFrame:
         if `data` is not an interpolated type and `affine` is None
     TypeError
         if `data` is not one of types specified in Parameters.
+
     """
 
     def __init__(
@@ -114,6 +115,7 @@ class InterpolatedCoordinateFrame:
         -------
         BaseRepresenation
             Representation of type ``self.data`` evaluated with `affine`
+
         """
         return self.frame.realize_frame(self.frame.data(affine))
 
@@ -151,6 +153,7 @@ class InterpolatedCoordinateFrame:
         frameobj : same as this frame
             A new object with the same frame attributes as this one, but with
             the ``data`` as the coordinate data.
+
         """
         frame = self.frame.realize_frame(data, **kwargs)
         return self._class_(frame, affine=affine, **kwargs)
@@ -287,6 +290,7 @@ class InterpolatedCoordinateFrame:
         >>> coord  # doctest: +FLOAT_CMP
         <SkyCoord (ICRS): (x, y, z) [dimensionless]
             (1., 0., 0.)>
+
         """
         rep = self.frame.represent_as(base, s=s, in_frame_units=in_frame_units)
 
@@ -313,6 +317,7 @@ class InterpolatedCoordinateFrame:
         ------
         ValueError
             If there is no possible transformation route.
+
         """
         newframe = self.frame.transform_to(new_frame)
         return self._realize_class(newframe)
@@ -342,6 +347,7 @@ class InterpolatedCoordinateFrame:
         -------
         str
             string representation of the data
+
         """
         # if not self.has_data:  # must have data to be interpolated
 
@@ -469,6 +475,7 @@ class InterpolatedCoordinateFrame:
         is stable at all locations, including poles and antipodes [1]_.
 
         .. [1] https://en.wikipedia.org/wiki/Great-circle_distance
+
         """  # noqa: E501
         return self._separation(point, angular=True, interpolate=interpolate, affine=affine)
 
@@ -503,6 +510,7 @@ class InterpolatedCoordinateFrame:
         ------
         ValueError
             If this or the other coordinate do not have distances.
+
         """  # noqa: E501
         return self._separation(point, angular=False, interpolate=interpolate, affine=affine)
 
@@ -564,6 +572,7 @@ class InterpolatedSkyCoord(SkyCoord):
         -------
         `SkyCoord`
             CoordinateFrame of type ``self.frame`` evaluated with `affine`
+
         """
         return SkyCoord(self.frame(affine))
 
@@ -613,6 +622,7 @@ class InterpolatedSkyCoord(SkyCoord):
         ------
         ValueError
             If there is no possible transformation route.
+
         """
         nsc = self.uninterpolated.transform_to(frame, merge_attributes=merge_attributes)
         return self.__class__(nsc, affine=self.affine, copy=False)
@@ -661,6 +671,7 @@ class InterpolatedSkyCoord(SkyCoord):
         is stable at all locations, including poles and antipodes [1]_.
 
         .. [1] https://en.wikipedia.org/wiki/Great-circle_distance
+
         """  # noqa: E501
         return self._separation(point, angular=True, interpolate=interpolate, affine=affine)
 
@@ -696,6 +707,7 @@ class InterpolatedSkyCoord(SkyCoord):
         ------
         ValueError
             If this or the other coordinate do not have distances.
+
         """  # noqa: E501
         return self._separation(point, angular=False, interpolate=interpolate, affine=affine)
 
@@ -768,6 +780,7 @@ class InterpolatedSkyCoord(SkyCoord):
         --------
         astropy.coordinates.match_coordinates_sky
         SkyCoord.match_to_catalog_3d
+
         """
         idx: NDArray  # pragma: no cover
         sep2d: Angle  # pragma: no cover
@@ -831,6 +844,7 @@ class InterpolatedSkyCoord(SkyCoord):
         --------
         astropy.coordinates.match_coordinates_3d
         SkyCoord.match_to_catalog_sky
+
         """
         idx: NDArray  # pragma: no cover
         sep2d: Angle  # pragma: no cover
@@ -897,6 +911,7 @@ class InterpolatedSkyCoord(SkyCoord):
         --------
         astropy.coordinates.search_around_sky
         SkyCoord.search_around_3d
+
         """
         idxsearch: NDArray  # pragma: no cover
         idxself: NDArray  # pragma: no cover
@@ -966,6 +981,7 @@ class InterpolatedSkyCoord(SkyCoord):
         --------
         astropy.coordinates.search_around_3d
         SkyCoord.search_around_sky
+
         """
         idxsearch: NDArray  # pragma: no cover
         idxself: NDArray  # pragma: no cover
