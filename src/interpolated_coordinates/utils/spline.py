@@ -82,6 +82,7 @@ References
     & SciPy 1.0 Contributors (2020). SciPy 1.0: Fundamental Algorithms for
     Scientific Computing in Python. Nature Methods, 17, 261-272.
 
+
 """
 
 from __future__ import annotations
@@ -421,6 +422,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         -------
         y : Quantity array_like
             Evaluated spline with units ``y_unit``. Same shape as `x`.
+
         """
         x = (x << self._xunit).value
         y: ndarray = super().__call__(x, nu=nu, ext=ext)
@@ -482,6 +484,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
         >>> spl.integral(-1, 0)
         0.0
+
         """
         a_val: float = a.to_value(self._xunit)
         b_val: float = b.to_value(self._xunit)
@@ -510,6 +513,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         >>> spl = UnivariateSpline(x, y)
         >>> np.round(spl.derivatives(1.5), 2)  # doctest: +FLOAT_CMP
         array([2.25, 3.  , 2.  , 0.  ])
+
         """
         x_val: float = x.to_value(self._xunit)
         d_vals: ndarray = super().derivatives(x_val)
@@ -561,6 +565,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
         This agrees well with roots :math:`\\pi/2 + n\\pi` of
         :math:`\\cos(x) = \\sin'(x)`.
+
         """
         tck = fitpack.splder(self._eval_args, n)
         # if self.ext is 'const', derivative.ext will be 'zeros'
@@ -617,6 +622,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
         >>> from scipy.special import ellipk
         >>> ellipk(0.8)  # doctest: +FLOAT_CMP
         2.2572053268208538
+
         """
         tck = fitpack.splantider(self._eval_args, n)
         x_unit = self._xunit
@@ -724,6 +730,7 @@ class InterpolatedUnivariateSplinewithUnits(
 
     >>> spl.get_residual()
     <Quantity 0. m>
+
     """
 
     def __init__(
@@ -901,6 +908,7 @@ class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits, _interp.LSQUnivari
     >>> s1 = LSQUnivariateSplinewithUnits(x, x, knt[1:-1])  # Chop 1st and last knot
     >>> s1.get_knots()
     <Quantity [0., 2., 3., 4., 5., 6., 7., 9.] m>
+
     """
 
     def __init__(

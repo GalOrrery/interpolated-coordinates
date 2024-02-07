@@ -105,6 +105,7 @@ class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDif
     ``represent_as`` method. If one wants to use an associated differential
     class, one should also define ``unit_vectors`` and ``scale_factors``
     methods (see those methods for details).
+
     """
 
     attr_classes: ClassVar[dict[str, type]] = {"q1": u.Quantity, "q2": u.Quantity, "q3": u.Quantity}
@@ -126,6 +127,7 @@ class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDif
             Generic form of `rep_cls`.
             If `rep_cls` is already generic, return it unchanged.
             Subclasses are cached in a registry.
+
         """
         cls: GenericRepresentation
 
@@ -177,6 +179,7 @@ def _ordinal(n: int) -> str:
     -------
     str
         Ordinal form `n`. Ex 1 -> '1st', 2 -> '2nd', 3 -> '3rd'.
+
     """
     i: int = n % 5 * (n % 100 ^ 15 > 4 > n % 10)  # noqa: PLR2004
     return str(n) + "tsnrhtdd"[i::4]
@@ -197,6 +200,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
     copy : bool, optional
         If `True` (default), arrays will be copied. If `False`, arrays will
         be references, though possibly broadcast to ensure matching shapes.
+
     """
 
     base_representation: coord.BaseRepresentation = GenericRepresentation
@@ -222,6 +226,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
             Generic form of `dif_cls`.
             If `dif_cls` is already generic, return it unchanged.
             Subclasses are cached in a registry.
+
         """
         # 1) check if it's already generic
         if issubclass(dif_cls, GenericDifferential):
@@ -293,6 +298,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
         -------
         `GenericDifferential`
             Of ordinal `n`
+
         """
         rep_cls_name: str = rep_cls.__name__[: -len("Representation")]
 
@@ -348,6 +354,7 @@ def __getattr__(name: str) -> type:
         If `name` doesn't start with "Generic", the "Generic"-removed name is
         not for a :class:`~astropy.coordinates.BaseRepresentation` or
         :class:`~astropy.coordinates.BaseDifferential`.
+
     """
     if name.startswith("Generic"):
         name = name.replace("Generic", "")

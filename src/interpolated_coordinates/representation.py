@@ -118,6 +118,7 @@ def _infer_derivative_type(
     Returns
     -------
     `astropy.coordinates.BaseDifferential` | `~interpolated_coordinates.utils.GenericDifferential`
+
     """
     unit = u.Unit(dif_unit)
     rep_cls = rep.__class__  # (store rep class for line length)
@@ -190,6 +191,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         If affine is not same length as `rep`.
     TypeError
         If `rep` not not type BaseRepresentationOrDifferential.
+
     """
 
     def __new__(cls: type[IRoDType], *_: Any, **__: Any) -> IRoDType:
@@ -315,6 +317,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         affine : `~astropy.units.Quantity` array-like
             The affine interpolation parameter.
             If None, returns representation points.
+
         """
 
     @property
@@ -347,6 +350,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         ----------
         n : int, optional
             Order of derivative to evaluate. Default: 1
+
         """
         # Evaluate the spline on each argument of the position
         params = {
@@ -567,6 +571,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         ValueError
             If `other` is not same length as the this instance's affine
             parameter.
+
         """
         rep = self.data.from_cartesian(other)
         return self._class_(rep, self.affine, **self._interp_kwargs)
@@ -596,6 +601,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         cartrepr : `CartesianRepresentation` or `CartesianDifferential`
             The representation in Cartesian form.
             If starting from a Cart
+
         """
         rep = self.data.to_cartesian()
         return self._class_(rep, self.affine, **self._interp_kwargs)
@@ -614,6 +620,7 @@ class InterpolatedBaseRepresentationOrDifferential:
         -------
         `interpolated_coordinates.InterpolatedBaseRepresentationOrDifferential`
             Same type as this instance.
+
         """
         data = self.data.copy(*args, **kwargs)
         args, kwargs = self.__getnewargs_ex__()
@@ -669,6 +676,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
     interp_cls : Callable (optional, keyword-only)
         option for 'interp_kwargs'.
         If not specified, default is `IntpUnivarSplUnits`.
+
     """
 
     def __new__(
@@ -700,6 +708,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
         -------
         :class:`~astropy.coordinates.BaseRepresenation`
             Representation of type ``self.data`` evaluated with `affine`
+
         """
         if affine is None:  # If None, returns representation as-is.
             return self.data
@@ -748,6 +757,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
             Can be a single class if only a single differential is attached,
             otherwise it should be a `dict` keyed by the same keys as the
             differentials.
+
         """
         rep = self.data.represent_as(other_class, differential_class=differential_class)
 
@@ -776,6 +786,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
         newrepr
             A copy of this representation, but with the ``differentials`` as
             its differentials.
+
         """
         if not differentials:  # (from source code)
             return self
@@ -792,6 +803,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
         newrepr
             A shallow copy of this representation, without any differentials.
             If no differentials were present, no copy is made.
+
         """
         if not self._differentials:  # from source code
             return self
@@ -806,6 +818,7 @@ class InterpolatedRepresentation(InterpolatedBaseRepresentationOrDifferential):
         ----------
         n : int, optional
             Order of derivative to evaluate. Default: 1
+
         """
         ideriv: InterpolatedDifferential
         if f"affine {n}" in self._derivatives:
@@ -916,6 +929,7 @@ class InterpolatedCartesianRepresentation(InterpolatedRepresentation):  # noqa: 
             <Quantity [[ 1.8660254 , 3.23205081],
                        [ 1.23205081, 1.59807621],
                        [ 3.        , 4.        ]] pc>
+
         """
         return self._realize_class(self.data.transform(matrix), self.affine)
 
@@ -951,6 +965,7 @@ class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):  #
         -------
         `~astropy.coordinates.BaseDifferential`
             Representation of type ``self.data`` evaluated with `affine`
+
         """
         if affine is None:  # If None, returns representation as-is.
             return self.data
@@ -981,6 +996,7 @@ class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):  #
             Base relative to which the differentials are defined.  If the other
             class is a differential representation, the base will be converted
             to its ``base_representation``.
+
         """
         rep = self.data.represent_as(other_class, base=base)
 
@@ -1012,6 +1028,7 @@ class InterpolatedDifferential(InterpolatedBaseRepresentationOrDifferential):  #
             The representation in Cartesian form.
             On Differentials, ``to_cartesian`` returns a Representation
             https://github.com/astropy/astropy/issues/6215
+
         """
         rep: CartesianRepresentation = self.data.to_cartesian()
         return InterpolatedCartesianRepresentation(rep, self.affine, **self._interp_kwargs)
