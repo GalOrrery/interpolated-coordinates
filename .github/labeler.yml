@@ -9,13 +9,13 @@ Docs:
   - CITATION
   - .mailmap
   - readthedocs.yml
-  - '*.md'
-  - any: ['*.rst', '!CHANGES.rst']
+  - "*.md"
+  - any: ["*.rst", "!CHANGES.rst"]
 
 testing:
   - codecov.yml
   - conftest.py
-  - '**/conftest.py'
+  - "**/conftest.py"
   - azure-pipelines.yml
   - tox.ini
   - .circleci/*
@@ -33,11 +33,10 @@ installation:
 Release:
   - docs/development/releasing.rst
 
-
 coordinates:
   - interpolated_coordinates/*
   - interpolated_coordinates/tests/**/*
   - docs/index.rst
 
 utils:
-  - any: ['**/utils/**/*',]
+  - any: ["**/utils/**/*"]

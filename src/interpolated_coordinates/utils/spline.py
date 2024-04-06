@@ -5,17 +5,13 @@ they do not understand |Unit|. A standard workaround solution when one needs
 to interpolate is to strip quantities of their units, apply the interpolation,
 then add units back.
 
-As an example:
-
-.. code-block:: python
+As an example::
 
     >>> import numpy as np
     >>> import astropy.units as u
     >>> x = np.linspace(-3, 3, 50) * u.s
     >>> y = 8 * u.m / (x.value**2 + 4)
     >>> xs = np.linspace(-2, 2, 10) * u.s  # for evaluating spline
-
-.. code-block:: python
 
     >>> from scipy.interpolate import InterpolatedUnivariateSpline
     >>> spl = InterpolatedUnivariateSpline(x.to_value(u.s), y.to_value(u.m))
@@ -27,10 +23,7 @@ As an example:
 This is fine, but a bit of a hassle. Instead, we can wrap the unit stripping /
 adding process into a unit-aware version of the spline interpolation classes.
 
-The same example as above, but with the new class:
-
-.. code-block:: python
-    :emphasize-lines: 1
+The same example as above, but with the new class::
 
     >>> from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
     >>> spl = InterpolatedUnivariateSplinewithUnits(x, y)
@@ -123,7 +116,7 @@ USwUType = TypeVar("USwUType", bound="UnivariateSplinewithUnits")
 ##############################################################################
 
 
-class UnivariateSplinewithUnits(_interp.UnivariateSpline):
+class UnivariateSplinewithUnits(_interp.UnivariateSpline):  # type: ignore[misc]
     """1-D smoothing spline fit to a given set of data points.
 
     Fits a spline y = spl(x) of degree `k` to the provided `x`, `y` data.  `s`
@@ -640,7 +633,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):
 
 class InterpolatedUnivariateSplinewithUnits(
     UnivariateSplinewithUnits,
-    _interp.InterpolatedUnivariateSpline,
+    _interp.InterpolatedUnivariateSpline,  # type: ignore[misc]
 ):
     """1-D interpolating spline for a given set of data points, with units.
 
@@ -776,7 +769,7 @@ class InterpolatedUnivariateSplinewithUnits(
 # -------------------------------------------------------------------
 
 
-class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits, _interp.LSQUnivariateSpline):
+class LSQUnivariateSplinewithUnits(UnivariateSplinewithUnits, _interp.LSQUnivariateSpline):  # type: ignore[misc]
     """1-D spline with explicit internal knots.
 
     Fits a spline y = spl(x) of degree `k` to the provided `x`, `y` data.  `t`

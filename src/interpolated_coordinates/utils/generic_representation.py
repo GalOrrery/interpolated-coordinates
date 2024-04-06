@@ -68,11 +68,11 @@ _GENERIC_REGISTRY: dict[
 ##############################################################################
 
 
-class GenericRepresentationOrDifferential(coord.BaseRepresentationOrDifferential):
+class GenericRepresentationOrDifferential(coord.BaseRepresentationOrDifferential):  # type: ignore[misc]
     pass
 
 
-class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDifferential):
+class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDifferential):  # type: ignore[misc]
     """Generic representation of a point in a 3D coordinate system.
 
     Parameters
@@ -185,7 +185,7 @@ def _ordinal(n: int) -> str:
     return str(n) + "tsnrhtdd"[i::4]
 
 
-class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDifferential):
+class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDifferential):  # type: ignore[misc]
     r"""A base class representing differentials of representations.
 
     These represent differences or derivatives along each component.

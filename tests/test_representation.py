@@ -135,7 +135,7 @@ class Test_InterpolatedBaseRepresentationOrDifferential(InterpolatedCoordinatesB
     @pytest.fixture(scope="class")
     def irep(self, irep_cls, rep, affine):
         class SubClass(irep_cls):  # so not abstract & can instantiate
-            # TODO! not use Cartesian `rep`, whic is a special case
+            # TODO! not use Cartesian `rep`, which is a special case
             def _scale_operation(self, op, *args):
                 rep = self.data._scale_operation(op, *args)
                 return self._realize_class(rep, self.affine)

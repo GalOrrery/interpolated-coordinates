@@ -24,16 +24,20 @@ pip install git+https://github.com/astropy/astropy
 command. -->
 
 ### Description
+
 <!-- Provide a general description of the bug. -->
 
 ### Expected behavior
+
 <!-- What did you expect to happen. -->
 
 ### Actual behavior
+
 <!-- What actually happened. -->
 <!-- Was the output confusing or poorly described? -->
 
 ### Steps to Reproduce
+
 <!-- Ideally a code example could be provided so we can run it ourselves. -->
 <!-- If you are pasting code, use triple backticks (```) around
 your code snippet. -->
@@ -49,6 +53,7 @@ reveal secrets like tokens and passwords. -->
 ```
 
 ### System Details
+
 <!-- Even if you do not think this is necessary, it is useful information for the maintainers.
 Please run the following snippet and paste the output below:
 import platform; print(platform.platform())

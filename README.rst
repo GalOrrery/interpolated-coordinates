@@ -111,7 +111,9 @@ We will start with interpolating |Rep|_ objects.
         differentials=coord.CartesianDifferential(
             d_x=np.linspace(3, 4, num=npts) * (u.km / u.s),
             d_y=np.linspace(4, 5, num=npts) * (u.km / u.s),
-            d_z=np.linspace(5, 6, num=npts) * (u.km / u.s)))
+            d_z=np.linspace(5, 6, num=npts) * (u.km / u.s),
+        ),
+    )
 
 Now that the a standard |CartRep|_ is defined, we can interpolate each dimension against an affine parameter. The affine parameter can have any units: time, arc length, furlongs per steradian, etc. So long as the value (of the affine parameter) works with |IUS|_, it's AOK.
 
@@ -310,9 +312,9 @@ all the normal ways, except that it requires the kwarg ``affine``.
 
 .. code-block:: python
 
-    isc = icoord.InterpolatedSkyCoord([1, 2, 3, 4], [-30, 45, 8, 16],
-                                      frame="icrs", unit="deg",
-                                      affine=affine[:4])
+    isc = icoord.InterpolatedSkyCoord(
+        [1, 2, 3, 4], [-30, 45, 8, 16], frame="icrs", unit="deg", affine=affine[:4]
+    )
     isc
 ::
 
@@ -400,6 +402,7 @@ As an example:
 
     import numpy as np, astropy.units as u
     from scipy.interpolate import InterpolatedUnivariateSpline
+
     x = np.linspace(-3, 3, 50) * u.s
     y = 8 * u.m / (x.value**2 + 4)
 
@@ -421,6 +424,7 @@ The same example as above, but with the new class:
 .. code-block:: python
 
     from interpolated_coordinates.utils import InterpolatedUnivariateSplinewithUnits
+
     spl = InterpolatedUnivariateSplinewithUnits(x, y)
     spl(xs)
 ::
