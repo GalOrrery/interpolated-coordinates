@@ -24,6 +24,7 @@ dependencies = [
     "astropy>=5.0",
     "numpy",
     "scipy>=1.6",
+    "typing_extensions",
 ]
 
 [build-system]
