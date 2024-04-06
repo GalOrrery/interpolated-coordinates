@@ -72,7 +72,7 @@ class InterpolatedCoordinateFrame:
         data: CoordinateType,
         affine: Quantity | None = None,
         *,
-        interps: dict | None = None,
+        interps: dict[str, Any] | None = None,
         **interp_kwargs: Any,
     ) -> None:
         # get rep from CoordinateType
@@ -87,7 +87,7 @@ class InterpolatedCoordinateFrame:
 
             rep = InterpolatedRepresentation(rep, affine=affine, interps=interps, **interp_kwargs)
         else:
-            msg = ("`data` must be type <InterpolatedRepresentation> or <BaseRepresentation>",)
+            msg = "`data` must be type <InterpolatedRepresentation> or <BaseRepresentation>"
             raise TypeError(msg)
 
         self.frame = data.realize_frame(rep)
@@ -95,11 +95,11 @@ class InterpolatedCoordinateFrame:
 
     @property
     def _interp_kwargs(self) -> dict[str, Any]:
-        ikw: dict = self.data._interp_kwargs
+        ikw: dict[str, Any] = self.data._interp_kwargs
         return ikw
 
     @_interp_kwargs.setter
-    def _interp_kwargs(self, value: dict) -> None:
+    def _interp_kwargs(self, value: dict[str, Any]) -> None:
         self.data._interp_kwargs = value
 
     def __call__(self, affine: Quantity | None = None) -> BaseRepresentation:
@@ -167,7 +167,7 @@ class InterpolatedCoordinateFrame:
     # Interpolation Methods
     # Mapped to underlying Representation
 
-    @format_doc(InterpolatedBaseRepresentationOrDifferential.derivative.__doc__)
+    @format_doc(InterpolatedBaseRepresentationOrDifferential.derivative.__doc__)  # type: ignore[misc]
     def derivative(self, n: int = 1) -> BaseRepresentationOrDifferential:
         """Take nth derivative wrt affine parameter."""
         return self.frame.data.derivative(n=n)
@@ -392,15 +392,12 @@ class InterpolatedCoordinateFrame:
                 # Reassemble the repr string
                 data_repr = part1 + "(" + affine_name + "| " + ", ".join(comp_names) + ")" + part2
 
-        # else:  # uncomment when encounter
-
         data_cls_name = "Interpolated" + data.__class__.__name__
         if data_repr.startswith("<" + data_cls_name):
             # remove both the leading "<" and the space after the name, as well
             # as the trailing ">"
             i = len(data_cls_name) + 2
             data_repr = data_repr[i:-1]
-        # else:  # uncomment when encounter
 
         if "s" in self.data.differentials:
             data_repr_spl = data_repr.split("\n")
@@ -430,7 +427,6 @@ class InterpolatedCoordinateFrame:
         cls_name = self.__class__.__name__
         if data_repr:
             return f"<Interpolated{cls_name} Coordinate{frameattrs}: {data_repr}>"
-        # else:  # uncomment when encounter
 
         return "TODO!"
 
@@ -536,7 +532,7 @@ class InterpolatedCoordinateFrame:
 #####################################################################
 
 
-class InterpolatedSkyCoord(SkyCoord):
+class InterpolatedSkyCoord(SkyCoord):  # type: ignore[misc]
     """Interpolated SkyCoord."""
 
     def __init__(
@@ -601,7 +597,7 @@ class InterpolatedSkyCoord(SkyCoord):
         Note that in either case, any explicitly set attributes on the source
         `SkyCoord` that are not part of the destination frame's definition are
         kept (stored on the resulting `SkyCoord`), and thus one can round-trip
-        (e.g., from FK4 to ICRS to FK4 without loosing obstime).
+        (e.g., from FK4 to ICRS to FK4 without losing obstime).
 
         Parameters
         ----------

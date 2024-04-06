@@ -8,4 +8,5 @@
 
 ## Reporting a Vulnerability
 
-Please open an [Issue](https://github.com/GalOrrery/interpolated-coordinates/issues)
+Please open an
+[Issue](https://github.com/GalOrrery/interpolated-coordinates/issues)
