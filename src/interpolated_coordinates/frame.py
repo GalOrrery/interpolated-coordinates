@@ -409,8 +409,7 @@ class InterpolatedCoordinateFrame:
                     "s",
                 ).items():
                     diffrepr[0] = diffrepr[0].replace(rep_nm, frm_nm)
-                if diffrepr[-1].endswith(">"):
-                    diffrepr[-1] = diffrepr[-1][:-1]
+                diffrepr[-1] = diffrepr[-1].removesuffix(">")
                 data_repr_spl[-1] = "\n".join(diffrepr)
 
             data_repr = "\n".join(data_repr_spl)

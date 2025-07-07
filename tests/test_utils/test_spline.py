@@ -1,9 +1,9 @@
 """Testing :mod:`~interpolated_coordinates.utils.splines`."""
 
 __all__ = [
-    "Test_UnivariateSplinewithUnits",
     "Test_InterpolatedUnivariateSplinewithUnits",
     "Test_LSQUnivariateSplinewithUnits",
+    "Test_UnivariateSplinewithUnits",
 ]
 
 import astropy.units as u

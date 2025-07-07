@@ -1,8 +1,8 @@
 """Testing :mod:`~interpolated_coordinates.utils.generic_representation`."""
 
 __all__ = [
-    "test_GENERIC_REGISTRY",
     "Test_GenericRepresentation",
+    "test_GENERIC_REGISTRY",
 ]
 
 

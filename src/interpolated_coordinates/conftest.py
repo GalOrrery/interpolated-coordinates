@@ -46,8 +46,8 @@ def pytest_report_header(config: Any) -> str:  # noqa: ARG001
     """Add extra info to the :mod:`pytest` header."""
     # This gets added after the pytest-astropy-header output.
     return (
-        f'ARCH_ON_CI: {os.environ.get("ARCH_ON_CI", "undefined")}\n'
-        f'IS_CRON: {os.environ.get("IS_CRON", "undefined")}\n'
+        f"ARCH_ON_CI: {os.environ.get('ARCH_ON_CI', 'undefined')}\n"
+        f"IS_CRON: {os.environ.get('IS_CRON', 'undefined')}\n"
     )
 
 

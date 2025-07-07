@@ -50,8 +50,8 @@ import astropy.units as u
 from astropy.coordinates.representation import DIFFERENTIAL_CLASSES
 
 __all__ = [
-    "GenericRepresentation",
     "GenericDifferential",
+    "GenericRepresentation",
 ]
 
 ##############################################################################
@@ -150,7 +150,7 @@ class GenericRepresentation(coord.BaseRepresentation, GenericRepresentationOrDif
             # for i, k in enumerate(rep_cls.attr_classes.keys()):
             #     def get_attr(self):
 
-            cls = cast(GenericRepresentation, type(name, bases, attrs_meths))
+            cls = cast("GenericRepresentation", type(name, bases, attrs_meths))
 
             # cache b/c can only define the same Rep/Dif once
             _GENERIC_REGISTRY[rep_cls] = cls
@@ -269,7 +269,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
             }
 
             # Make generic differential
-            cls = cast(GenericDifferential, type(name, bases, attrs_meths))
+            cls = cast("GenericDifferential", type(name, bases, attrs_meths))
 
             # cache, either by class or by name
             _GENERIC_REGISTRY[dif_cls if n == 1 else name] = cls
@@ -316,7 +316,7 @@ class GenericDifferential(coord.BaseDifferential, GenericRepresentationOrDiffere
 
         else:
             cls = cast(
-                GenericDifferential,
+                "GenericDifferential",
                 type(
                     name,
                     (GenericDifferential, rep_cls),
