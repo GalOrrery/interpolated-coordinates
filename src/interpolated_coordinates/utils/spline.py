@@ -81,9 +81,9 @@ References
 from __future__ import annotations
 
 __all__ = [
-    "UnivariateSplinewithUnits",
     "InterpolatedUnivariateSplinewithUnits",
     "LSQUnivariateSplinewithUnits",
+    "UnivariateSplinewithUnits",
 ]
 
 import warnings
@@ -95,6 +95,7 @@ import scipy.interpolate as _interp
 from astropy.units import Quantity
 from numpy import ndarray
 from scipy.interpolate import fitpack
+from typing_extensions import Self
 
 try:
     from scipy.interpolate._fitpack2 import _curfit_messages
@@ -335,18 +336,18 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):  # type: ignore[misc]
         # then validate with UnivariateSpline method, which works with units!
         out: tuple[ndarray, ndarray, ndarray, list[Quantity], int | str]
         out = super().validate_input(x, y, w, bbox, k, s, ext, check_finite)
-        return out  # noqa: RET504
+        return out
 
     @classmethod
     def _from_tck(
-        cls: type[USwUType],
+        cls,
         tck: tuple[ndarray, ndarray, ndarray],
         x_unit: UnitLikeType,
         y_unit: UnitLikeType,
         ext: int = 0,
-    ) -> USwUType:
+    ) -> Self:
         """Construct a spline object from given tck."""
-        self: USwUType = super()._from_tck(tck, ext=ext)
+        self: Self = super()._from_tck(tck, ext=ext)
         self._xunit = u.Unit(x_unit)
         self._yunit = u.Unit(y_unit)
 
@@ -522,7 +523,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):  # type: ignore[misc]
         """
         return super().roots() * self._xunit
 
-    def derivative(self: USwUType, n: int = 1) -> USwUType:
+    def derivative(self, n: int = 1) -> Self:
         r"""Construct a new spline representing the derivative of this spline.
 
         Parameters
@@ -572,7 +573,7 @@ class UnivariateSplinewithUnits(_interp.UnivariateSpline):  # type: ignore[misc]
             ext=ext,
         )
 
-    def antiderivative(self: USwUType, n: int = 1) -> USwUType:
+    def antiderivative(self, n: int = 1) -> Self:
         r"""Construct a new spline representing this spline's antiderivative.
 
         Parameters

@@ -2,9 +2,9 @@
 
 __all__ = [
     "Test_InterpolatedBaseRepresentationOrDifferential",
-    "Test_InterpolatedRepresentation",
     "Test_InterpolatedCartesianRepresentation",
     "Test_InterpolatedDifferential",
+    "Test_InterpolatedRepresentation",
 ]
 
 
@@ -624,8 +624,6 @@ class Test_InterpolatedRepresentation(Test_InterpolatedBaseRepresentationOrDiffe
         # and components are the same
         for c in expected.components:
             assert all(getattr(got, c) == getattr(expected, c))
-
-    #
 
 
 #####################################################################
